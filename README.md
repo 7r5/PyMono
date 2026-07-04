@@ -12,11 +12,19 @@ PyMono es un proyecto Python para generar tarjetas estilo Monopoly a partir de u
    ```bash
    python -m pip install -r requirements.txt
    ```
-2. Ejecuta el script:
+
+2. Genera tarjetas directamente en PDF:
    ```bash
    python main.py
    ```
-3. Revisa `Tarjetas_Monopoly.pdf`.
+   - El resultado se guarda en `Tarjetas_Monopoly.pdf`.
+
+3. O utiliza la versión web editable:
+   ```bash
+   python app.py
+   ```
+   - Abre `http://127.0.0.1:5000`.
+   - Usa el botón "Imprimir / Guardar PDF" para generar el PDF desde el navegador.
 
 ## Archivos
 - `main.py` — script principal

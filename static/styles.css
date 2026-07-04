@@ -62,7 +62,6 @@ body {
   display: grid;
   grid-template-rows: auto auto;
   gap: 0.9rem;
-  background: transparent;
   width: 7cm;
 }
 
@@ -72,163 +71,277 @@ body {
   min-height: 8cm;
   border-radius: 1.2rem;
   overflow: hidden;
-  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(17, 17, 17, 0.12);
   background: #fff;
 }
 
 .card-front {
-  border-top: 0.65rem solid #1e56c4;
+  border-top: 1.4rem solid #1e56c4;
 }
 
 .card-head {
-  padding: 1.2rem 1.2rem 0.8rem;
+  padding: 1.3rem 1.2rem 0.95rem;
   color: white;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+  background: transparent;
   text-align: center;
 }
 
 .card-head-title h2 {
-  margin: 0.3rem 0 0;
-  font-size: 1.25rem;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
-  font-family: "Poppins", "Inter", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 700;
+  margin: 0.2rem 0 0.3rem;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  letter-spacing: 0.09em;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 800;
 }
 
 .card-head-title .card-group {
-  margin: 0;
+  display: block;
+  margin: 0 auto 0.4rem;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 0.75rem;
-  opacity: 0.9;
+  font-size: 0.72rem;
+  opacity: 0.88;
+}
+
+.card-head-title .card-city {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
 }
 
 .card-body {
-  padding: 1.15rem 1.2rem 1rem;
+  padding: 1.2rem 1.2rem 1rem;
   display: grid;
-  gap: 0.9rem;
+  gap: 0.85rem;
 }
 
-.card-section {
-  padding: 0.9rem 1rem;
-  border-radius: 1rem;
-  background: #fafbfd;
-  border: 1px solid rgba(36, 42, 66, 0.06);
-}
-
-.section-label {
-  margin: 0 0 0.85rem;
-  display: block;
-  color: #2b3a67;
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-}
-
-.section-row {
+.rent-block {
   display: flex;
   justify-content: space-between;
-  gap: 0.7rem;
-  align-items: center;
-  margin-bottom: 0.55rem;
-  font-size: 0.88rem;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 1rem 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 1.1rem;
 }
 
-.section-row strong {
-  color: #152d5e;
+.rent-tag {
+  color: #111;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.rent-value {
+  color: #111;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.mortgage-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  color: #111;
+}
+
+.mortgage-row strong {
+  font-weight: 800;
+}
+
+.table-block {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.95rem 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 1.1rem;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1.45fr 0.9fr 0.9fr;
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #111;
+}
+
+.table-header {
+  color: #555;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.icon-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.icon {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 0.2rem;
+}
+
+.house {
+  background: #0f8a39;
+}
+
+.hotel {
+  background: #da1a27;
+}
+
+.mortgage-block,
+.back-mortgage-block {
+  padding: 0.95rem 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 1.1rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.mortgage-title,
+.back-mortgage-label {
+  color: #111;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.mortgage-value,
+.back-mortgage-value {
+  color: #111;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.mortgage-meta,
+.back-mortgage-meta {
+  color: #555;
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 .card-icons {
   display: flex;
-  gap: 1rem;
   justify-content: center;
-  align-items: center;
-  margin-top: 0.4rem;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
 }
 
 .icon-box {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.75rem;
+  gap: 0.35rem;
+  padding: 0.38rem 0.7rem;
   border-radius: 999px;
-  background: #ffffff;
-  border: 1px solid rgba(36, 42, 66, 0.08);
-}
-
-.icon-shape {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 0.3rem;
-  border: 1px solid rgba(15, 23, 42, 0.18);
-  display: inline-block;
-}
-
-.house-shape {
-  background: linear-gradient(135deg, #12b34a, #0f8a39);
-}
-
-.hotel-shape {
-  background: linear-gradient(135deg, #ff5c6a, #da1a27);
+  background: #f8fafc;
+  border: 1px solid rgba(17, 17, 17, 0.08);
 }
 
 .icon-box span {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: #334155;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .card-back {
-  background: #fdf0f2;
-  border-color: rgba(255, 77, 110, 0.15);
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.12);
 }
 
-.back-label {
-  padding: 1.25rem 1.2rem 0;
-  font-size: 1.05rem;
-  color: #c31f2d;
+.back-head {
+  padding: 1.2rem 1.2rem 1rem;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+  text-align: center;
+}
+
+.back-pill {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #111;
+  font-size: 0.7rem;
   font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-}
-
-.back-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 12rem;
-  gap: 0.5rem;
-  padding: 0 1.2rem 1.35rem;
-}
-
-.back-title {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #4b4f59;
-  letter-spacing: 0.14em;
 }
 
 .card-back h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  text-align: center;
-  color: #1f2937;
+  margin: 0.55rem 0 0.2rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  color: #111;
 }
 
 .back-group {
-  margin: 0;
-  color: #5f6778;
-  font-size: 0.85rem;
+  display: block;
+  margin: 0 auto;
+  color: #555;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.back-content {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 1.2rem 1.2rem;
+}
+
+.back-mortgage-block {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.95rem 1rem;
+  background: #f8fafc;
+  border-radius: 1rem;
+}
+
+.back-mortgage-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #111;
+}
+
+.back-mortgage-value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111;
+}
+
+.back-mortgage-meta {
+  color: #555;
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 .back-footer {
+  padding: 0.85rem 1rem;
   margin: 0;
+  border-radius: 999px;
+  background: #f8fafc;
   color: #c31f2d;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  text-align: center;
+  letter-spacing: 0.16em;
 }
 
 @media print {

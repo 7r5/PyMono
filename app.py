@@ -33,6 +33,7 @@ def read_properties(csv_path):
                 "display_color": COLOR_MAP.get(color_name, "#8e8e8e"),
                 "grupo": row.get(blank_key, "").strip() if blank_key else row.get("grupo", "").strip(),
                 "titulo": row.get("titulo", "").strip(),
+                "ciudad": row.get("ciudad", "").strip() or row.get("city", "").strip() or row.get("zone", "").strip(),
                 "renta_simple": row.get("renta-simple", "").strip(),
                 "renta_grupo": row.get("renta-grupo", "").strip(),
                 "renta1": row.get("renta1", "").strip(),

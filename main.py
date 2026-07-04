@@ -82,112 +82,137 @@ def draw_front_card(c, x, y, prop):
     c.setLineWidth(0.8)
     c.roundRect(x + 0.06 * cm, y + 0.06 * cm, CARD_WIDTH - 0.12 * cm, CARD_HEIGHT - 0.12 * cm, 0.25 * cm, fill=0, stroke=1)
 
-    header_height = 1.6 * cm
+    header_height = 1.8 * cm
     color_rgb = get_rgb_color(prop["color"])
     c.setFillColorRGB(*color_rgb)
     c.roundRect(x + 0.1 * cm, y + CARD_HEIGHT - header_height - 0.1 * cm, CARD_WIDTH - 0.2 * cm, header_height, 0.2 * cm, fill=1, stroke=0)
 
     c.setFillColorRGB(1, 1, 1)
-    c.setFont("Helvetica-Bold", 10)
-    title_lines = wrap_text(prop["titulo"], 16)
-    title_y = y + CARD_HEIGHT - 0.5 * cm
+    c.setFont("Helvetica-Bold", 11)
+    title_lines = wrap_text(prop["titulo"], 18)
+    title_y = y + CARD_HEIGHT - 0.6 * cm
     for line in title_lines[:2]:
-        c.drawCentredString(x + CARD_WIDTH / 2, title_y, line)
+        c.drawCentredString(x + CARD_WIDTH / 2, title_y, line.upper())
         title_y -= 0.45 * cm
 
     if prop["grupo"]:
         c.setFont("Helvetica", 7)
-        c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT - 1.15 * cm, prop["grupo"].upper())
+        c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT - 1.25 * cm, prop["grupo"].upper())
 
-    content_x = x + 0.35 * cm
-    content_w = CARD_WIDTH - 0.7 * cm
-    content_y_top = y + CARD_HEIGHT - header_height - 0.25 * cm
-    content_h = content_y_top - (y + 0.6 * cm)
+    body_x = x + 0.35 * cm
+    body_w = CARD_WIDTH - 0.7 * cm
+    body_y = y + 0.55 * cm
+    body_h = CARD_HEIGHT - header_height - 1.05 * cm
     c.setFillColorRGB(1, 1, 1)
-    c.roundRect(content_x, y + 0.6 * cm, content_w, content_h, 0.18 * cm, fill=1, stroke=0)
-
-    section_x = content_x + 0.2 * cm
-    section_right = content_x + content_w - 0.2 * cm
-    section_y = content_y_top - 0.25 * cm
-    c.setFillColorRGB(0.13, 0.13, 0.13)
-    c.setFont("Helvetica-Bold", 7.5)
-    c.drawString(section_x, section_y, "RENTAS")
+    c.roundRect(body_x, body_y, body_w, body_h, 0.18 * cm, fill=1, stroke=0)
     c.setStrokeColorRGB(0.85, 0.85, 0.85)
-    c.setLineWidth(0.7)
-    c.line(section_x, section_y - 0.15 * cm, section_right, section_y - 0.15 * cm)
+    c.setLineWidth(0.6)
+    c.roundRect(body_x, body_y, body_w, body_h, 0.18 * cm, fill=0, stroke=1)
 
-    section_y -= 0.5 * cm
-    c.setFont("Helvetica", 6.8)
-    for label, key in [
-        ("Renta base", "renta_simple"),
-        ("Renta grupo", "renta_grupo"),
-        ("1 casa", "renta1"),
-        ("2 casas", "renta2"),
-        ("3 casas", "renta3"),
-        ("4 casas", "renta4"),
-        ("Hotel", "renta_hotel"),
+    section_x = body_x + 0.25 * cm
+    section_right = body_x + body_w - 0.25 * cm
+    current_y = body_y + body_h - 0.3 * cm
+
+    c.setFont("Helvetica-Bold", 7.5)
+    c.setFillColorRGB(0.13, 0.13, 0.13)
+    c.drawString(section_x, current_y, "RENTA")
+    c.setFont("Helvetica-Bold", 12)
+    c.drawRightString(section_right, current_y, f"${prop['renta_simple']}")
+    current_y -= 0.45 * cm
+
+    c.setStrokeColorRGB(0.9, 0.9, 0.9)
+    c.setLineWidth(0.5)
+    c.line(section_x, current_y, section_right, current_y)
+    current_y -= 0.35 * cm
+
+    c.setFont("Helvetica", 7)
+    for label, key, icons in [
+        ("With 1 House", "renta1", 1),
+        ("With 2 Houses", "renta2", 2),
+        ("With 3 Houses", "renta3", 3),
+        ("With 4 Houses", "renta4", 4),
+        ("With HOTEL", "renta_hotel", 0),
     ]:
-        c.drawString(section_x, section_y, label)
-        c.drawRightString(section_right, section_y, f"${prop[key]}")
-        section_y -= 0.36 * cm
+        c.drawString(section_x, current_y, label)
+        if icons > 0:
+            icon_x = section_x + 5.5 * cm
+            for i in range(icons):
+                draw_house_icon(c, icon_x + i * 0.45 * cm, current_y - 0.07 * cm, (0.08, 0.55, 0.18))
+        else:
+            draw_house_icon(c, section_x + 5.5 * cm, current_y - 0.07 * cm, (0.85, 0.08, 0.12))
+        c.drawRightString(section_right, current_y, f"${prop[key]}")
+        current_y -= 0.35 * cm
 
-    section_y -= 0.15 * cm
+    current_y -= 0.15 * cm
+    c.setStrokeColorRGB(0.9, 0.9, 0.9)
+    c.setLineWidth(0.5)
+    c.line(section_x, current_y, section_right, current_y)
+    current_y -= 0.35 * cm
+
     c.setFont("Helvetica-Bold", 7.5)
-    c.drawString(section_x, section_y, "COSTOS")
-    section_y -= 0.35 * cm
-    c.setFont("Helvetica", 6.8)
-    c.drawString(section_x, section_y, f"Casa: ${prop['costo_casa']}")
-    c.drawRightString(section_right, section_y, f"Hotel: ${prop['costo_hotel']}")
-
-    section_y -= 0.35 * cm
-    c.setFont("Helvetica-Bold", 7.5)
-    c.drawString(section_x, section_y, "HIPOTECA")
-    section_y -= 0.35 * cm
-    c.setFont("Helvetica", 6.8)
-    c.drawString(section_x, section_y, f"Hipotecado por: ${prop['hipotecado_por']}")
-    section_y -= 0.3 * cm
-    c.drawString(section_x, section_y, f"Deshipotecar: ${prop['para_deshipotecar']}")
-
-    icon_y = y + 0.7 * cm
-    for i in range(4):
-        draw_house_icon(c, section_x + i * (0.45 * cm), icon_y, (0.08, 0.55, 0.18))
-    draw_house_icon(c, section_x + 4 * (0.45 * cm), icon_y, (0.85, 0.08, 0.12))
-    c.setFont("Helvetica", 6)
-    c.setFillColorRGB(0.18, 0.18, 0.18)
-    c.drawString(section_x, icon_y - 0.25 * cm, "1 2 3 4 H")
+    c.drawString(section_x, current_y, "MORTGAGE VALUE")
+    current_y -= 0.35 * cm
+    c.setFont("Helvetica", 7)
+    c.drawString(section_x, current_y, f"${prop['hipotecado_por']}")
+    current_y -= 0.35 * cm
+    c.drawString(section_x, current_y, f"Houses cost ${prop['costo_casa']} each")
+    current_y -= 0.28 * cm
+    c.drawString(section_x, current_y, f"Hotels ${prop['costo_hotel']} plus 4 houses")
 
     c.restoreState()
 
 
 def draw_back_card(c, x, y, prop):
     c.saveState()
-    c.setFillColorRGB(*BACK_COLOR)
+
+    c.setFillColorRGB(*CARD_FILL_COLOR)
     c.roundRect(x, y, CARD_WIDTH, CARD_HEIGHT, 0.3 * cm, fill=1, stroke=0)
+    c.setStrokeColorRGB(*CARD_BORDER_COLOR)
+    c.setLineWidth(0.8)
+    c.roundRect(x + 0.06 * cm, y + 0.06 * cm, CARD_WIDTH - 0.12 * cm, CARD_HEIGHT - 0.12 * cm, 0.25 * cm, fill=0, stroke=1)
 
-    inner_x = x + 0.32 * cm
-    inner_y = y + 0.32 * cm
-    inner_w = CARD_WIDTH - 0.64 * cm
-    inner_h = CARD_HEIGHT - 0.64 * cm
+    header_height = 1.4 * cm
     c.setFillColorRGB(1, 1, 1)
-    c.roundRect(inner_x, inner_y, inner_w, inner_h, 0.2 * cm, fill=1, stroke=0)
+    c.roundRect(x + 0.35 * cm, y + CARD_HEIGHT - header_height - 0.35 * cm, CARD_WIDTH - 0.7 * cm, header_height, 0.25 * cm, fill=1, stroke=0)
 
-    c.setFillColorRGB(*BACK_COLOR)
-    c.setFont("Helvetica-Bold", 13)
-    c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT - 1.2 * cm, "HIPOTECAR")
-
-    c.setFont("Helvetica-Bold", 9)
-    c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT - 1.85 * cm, "TARJETA DE PROPIEDAD")
-
-    c.setFillColorRGB(0.16, 0.16, 0.16)
     c.setFont("Helvetica-Bold", 8)
-    c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT / 2 + 0.25 * cm, prop["titulo"])
+    c.setFillColorRGB(0.11, 0.11, 0.11)
+    c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT - 0.9 * cm, "HIPOTECAR")
+    c.setFont("Helvetica-Bold", 11)
+    c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT - 1.3 * cm, prop["titulo"])
     if prop["grupo"]:
         c.setFont("Helvetica", 7)
-        c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT / 2 - 0.1 * cm, prop["grupo"].upper())
+        c.drawCentredString(x + CARD_WIDTH / 2, y + CARD_HEIGHT - 1.7 * cm, prop["grupo"].upper())
 
-    c.setFillColorRGB(*BACK_COLOR)
-    c.setFont("Helvetica-Bold", 12)
-    c.drawCentredString(x + CARD_WIDTH / 2, y + 1.7 * cm, "DESHIPOTECAR")
+    body_x = x + 0.35 * cm
+    body_y = y + 0.55 * cm
+    body_w = CARD_WIDTH - 0.7 * cm
+    body_h = CARD_HEIGHT - header_height - 1.1 * cm
+    c.setFillColorRGB(1, 1, 1)
+    c.roundRect(body_x, body_y, body_w, body_h, 0.18 * cm, fill=1, stroke=0)
+    c.setStrokeColorRGB(0.85, 0.85, 0.85)
+    c.setLineWidth(0.6)
+    c.roundRect(body_x, body_y, body_w, body_h, 0.18 * cm, fill=0, stroke=1)
+
+    section_x = body_x + 0.25 * cm
+    section_right = body_x + body_w - 0.25 * cm
+    current_y = body_y + body_h - 0.35 * cm
+
+    c.setFont("Helvetica-Bold", 8)
+    c.drawString(section_x, current_y, "Mortgage Value")
+    c.setFont("Helvetica-Bold", 10)
+    c.drawRightString(section_right, current_y, f"${prop['hipotecado_por']}")
+    current_y -= 0.45 * cm
+
+    c.setFont("Helvetica", 7)
+    c.drawString(section_x, current_y, f"Houses cost ${prop['costo_casa']} each")
+    current_y -= 0.32 * cm
+    c.drawString(section_x, current_y, f"Hotels ${prop['costo_hotel']} plus 4 houses")
+    current_y -= 0.45 * cm
+
+    c.setFont("Helvetica-Bold", 8)
+    c.setFillColorRGB(0.74, 0.16, 0.21)
+    c.drawCentredString(x + CARD_WIDTH / 2, body_y + 0.35 * cm, "DESHIPOTECAR")
     c.restoreState()
 
 

@@ -7,6 +7,7 @@ consistente.
 
 ## Concepto general
 
+-   Todos los textos en espanol
 -   Tarjeta vertical, proporción cercana a 7 x 8 cm.
 -   Diseño minimalista inspirado en Monopoly moderno.
 -   Fondo blanco con textura completamente lisa.

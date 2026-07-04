@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PyMono - Tarjetas Monopoly</title>
+  <title>PyMono - Tarjetas Monopoly Premium</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
   <header class="app-header">
     <div>
       <h1>PyMono</h1>
-      <p>Diseño profesional de tarjetas estilo Monopoly moderno.</p>
+      <p>Tarjetas de propiedad verticales 7×8 cm con estilo Monopoly premium.</p>
     </div>
     <div class="actions">
       <button onclick="window.print()">Imprimir / Guardar PDF</button>
@@ -20,78 +20,98 @@
   <main class="cards-grid">
     {% for prop in properties %}
       <article class="card">
-        <section class="card-front" style="border-top-color: {{ prop.display_color }};">
-          <div class="card-head" style="background: {{ prop.display_color }};">
-            <p class="card-group">{{ prop.grupo }}</p>
+        <section class="card-face card-front">
+          <div class="card-bar" style="background: {{ prop.display_color }};"></div>
+          <div class="card-head">
             <h2>{{ prop.titulo }}</h2>
             {% if prop.ciudad %}
               <p class="card-city">{{ prop.ciudad }}</p>
             {% endif %}
           </div>
 
-          <div class="card-body">
-            <section class="rent-block">
-              <span class="rent-tag">RENTA</span>
-              <span class="rent-value">${{ prop.renta_simple }}</span>
-            </section>
+          <section class="rent-block">
+            <span class="rent-label">RENTA</span>
+            <span class="rent-value">${{ prop.renta_simple }}</span>
+          </section>
 
-            <section class="table-block">
-              <div class="table-row table-header">
-                <span>Descripción</span>
-                <span>Ícono</span>
-                <strong>Valor</strong>
-              </div>
-              <div class="table-row">
-                <span>With 1 House</span>
-                <span class="icon-row"><span class="icon house"></span></span>
-                <strong>${{ prop.renta1 }}</strong>
-              </div>
-              <div class="table-row">
-                <span>With 2 Houses</span>
-                <span class="icon-row"><span class="icon house"></span><span class="icon house"></span></span>
-                <strong>${{ prop.renta2 }}</strong>
-              </div>
-              <div class="table-row">
-                <span>With 3 Houses</span>
-                <span class="icon-row"><span class="icon house"></span><span class="icon house"></span><span class="icon house"></span></span>
-                <strong>${{ prop.renta3 }}</strong>
-              </div>
-              <div class="table-row">
-                <span>With 4 Houses</span>
-                <span class="icon-row"><span class="icon house"></span><span class="icon house"></span><span class="icon house"></span><span class="icon house"></span></span>
-                <strong>${{ prop.renta4 }}</strong>
-              </div>
-              <div class="table-row">
-                <span>With HOTEL</span>
-                <span class="icon-row"><span class="icon hotel"></span></span>
-                <strong>${{ prop.renta_hotel }}</strong>
-              </div>
-            </section>
+          <section class="table-block">
+            <div class="table-row table-header">
+              <span>Descripción</span>
+              <span>Iconos</span>
+              <span>Precio</span>
+            </div>
+            <div class="table-row">
+              <span>Renta de grupo</span>
+              <span class="icon-row"></span>
+              <strong>${{ prop.renta_grupo }}</strong>
+            </div>
+            <div class="table-row">
+              <span>1 casa</span>
+              <span class="icon-row"><span class="icon house"></span></span>
+              <strong>${{ prop.renta1 }}</strong>
+            </div>
+            <div class="table-row">
+              <span>2 casas</span>
+              <span class="icon-row"><span class="icon house"></span><span class="icon house"></span></span>
+              <strong>${{ prop.renta2 }}</strong>
+            </div>
+            <div class="table-row">
+              <span>3 casas</span>
+              <span class="icon-row"><span class="icon house"></span><span class="icon house"></span><span class="icon house"></span></span>
+              <strong>${{ prop.renta3 }}</strong>
+            </div>
+            <div class="table-row">
+              <span>4 casas</span>
+              <span class="icon-row"><span class="icon house"></span><span class="icon house"></span><span class="icon house"></span><span class="icon house"></span></span>
+              <strong>${{ prop.renta4 }}</strong>
+            </div>
+            <div class="table-row">
+              <span>Hotel</span>
+              <span class="icon-row"><span class="icon hotel"></span></span>
+              <strong>${{ prop.renta_hotel }}</strong>
+            </div>
+          </section>
 
-            <section class="mortgage-block">
-              <div class="mortgage-row">
-                <span>Mortgage Value</span>
-                <strong>${{ prop.hipotecado_por }}</strong>
-              </div>
-              <div class="mortgage-meta">Houses cost ${{ prop.costo_casa }} each</div>
-              <div class="mortgage-meta">Hotels ${{ prop.costo_hotel }} plus 4 houses</div>
-            </section>
-          </div>
+          <div class="separator"></div>
+
+          <section class="mortgage-block">
+            <span class="mortgage-title">HIPOTECA</span>
+            <div class="mortgage-row">
+              <span>Valor</span>
+              <strong>${{ prop.hipotecado_por }}</strong>
+            </div>
+          </section>
+
+          <div class="separator"></div>
+
+          <section class="construction-block">
+            <div class="construction-text">Casas cuestan ${{ prop.costo_casa }} cada una</div>
+            <div class="construction-text">Hotel cuesta ${{ prop.costo_hotel }} + 4 casas</div>
+          </section>
         </section>
 
-        <section class="card-back">
+        <section class="card-face card-back">
+          <div class="card-bar" style="background: {{ prop.display_color }};"></div>
           <div class="back-head">
             <span class="back-pill">HIPOTECAR</span>
             <h3>{{ prop.titulo }}</h3>
-            <span class="back-group">{{ prop.grupo }}</span>
+            {% if prop.grupo %}
+              <p class="back-group">{{ prop.grupo }}</p>
+            {% endif %}
           </div>
           <div class="back-content">
             <section class="back-mortgage-block">
-              <span class="back-mortgage-label">Mortgage Value</span>
-              <span class="back-mortgage-value">${{ prop.hipotecado_por }}</span>
+              <div class="back-mortgage-row">
+                <span>Hipoteca</span>
+                <strong>${{ prop.hipotecado_por }}</strong>
+              </div>
+              <div class="back-mortgage-row">
+                <span>Deshipotecar</span>
+                <strong>${{ prop.para_deshipotecar }}</strong>
+              </div>
             </section>
-            <div class="back-mortgage-meta">Houses cost ${{ prop.costo_casa }} each</div>
-            <div class="back-mortgage-meta">Hotels ${{ prop.costo_hotel }} plus 4 houses</div>
+            <div class="back-meta">Casas ${{ prop.costo_casa }} c/u</div>
+            <div class="back-meta">Hotel ${{ prop.costo_hotel }} + 4 casas</div>
             <div class="back-footer">DESHIPOTECAR</div>
           </div>
         </section>

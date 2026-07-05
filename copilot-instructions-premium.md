@@ -1,4 +1,193 @@
-# Instrucciones de estilo para Copilot -- Tarjetas de Propiedades (Versión Premium)
+# Instrucciones de estilo para Copilot — PyMono
+
+## Estado del proyecto
+
+App web Flask completa para imprimir componentes de juego Monopoly personalizado.
+
+### Secciones implementadas
+
+| Sección | Ruta | Dimensiones | Layout impresión |
+|---|---|---|---|
+| Propiedades | `/` | 6.5×8 cm | 4 por fila, portrait, salto por fila |
+| Fortunas | `/fortunas` | 9×5.8 cm | 3 por fila, landscape |
+| Desgracias | `/desgracias` | 9×5.8 cm | 3 por fila, landscape |
+| Reversos | `/reversos` | 9×5.8 cm | 3 por fila, landscape, ~9/página |
+| Billetes | `/billetes` | 5×10 cm (rotados) | 5×2=10/página, landscape |
+
+---
+
+# Instrucciones de estilo — Tarjetas de Propiedades
+
+## Objetivo
+
+Generar tarjetas de propiedades con apariencia profesional, consistentes
+entre sí e inspiradas en el lenguaje visual del Monopoly moderno,
+manteniendo un diseño minimalista, limpio y altamente legible.
+
+---
+
+## Concepto General
+
+- Tarjeta vertical.
+- Dimensiones: **6.5×8 cm**.
+- Fondo blanco puro.
+- Diseño vectorial.
+- Estilo editorial.
+- Sin texturas, degradados, efectos 3D, biseles ni decoraciones innecesarias.
+
+Debe parecer una carta de juego premium impresa.
+
+---
+
+## Estructura (de arriba hacia abajo)
+
+1. Barra superior de color
+2. Nombre de la propiedad
+3. Ciudad o zona
+4. Bloque de RENTA
+5. Tabla de rentas
+6. Separador
+7. Hipoteca
+8. Separador
+9. Costos de construcción
+
+Nunca cambiar este orden.
+
+---
+
+## Encabezado
+
+- Barra sólida ocupando todo el ancho.
+- Color según el grupo (mapeo en `app.py` → `COLOR_MAP`).
+- Sin sombras ni degradados.
+
+Nombre: MAYÚSCULAS · Blanco · Negrita · Centrado
+Ciudad: Blanco · Más pequeña · Centrada
+
+---
+
+## Colores del grupo
+
+```python
+COLOR_MAP = {
+    "cafe":    "#8b5a2b",
+    "azul":    "#1e56c4",
+    "rosa":    "#c84f9a",
+    "naranja": "#f07e2b",
+    "rojo":    "#c31f2d",
+    "amarillo":"#f1c40f",
+    "verde":   "#1f8a44",
+    "morado":  "#6b2e8c",
+}
+```
+
+Texto principal: `#111111` · Fondo: `#FFFFFF`
+
+---
+
+## Tipografía
+
+- Inter, Montserrat, Segoe UI, Arial — nunca serif.
+- Pesos: 800 (títulos), 700 (etiquetas), 400 (valores).
+
+---
+
+## Tabla de Rentas
+
+Tres columnas: Descripción · Iconos · Precio.
+Precios alineados a la derecha. Espaciado uniforme.
+
+---
+
+## Iconografía
+
+- Casas: verde plano `#24B04A`, `<span class="icon house">` (div cuadrado)
+- Hotel: rojo plano `#D62828`, `<span class="icon hotel">` (div cuadrado)
+
+---
+
+## Impresión de tarjetas de propiedad
+
+- Layout: CSS Grid con `.print-row` wrappers (cada 4 tarjetas).
+- En pantalla: `.print-row { display: contents }` — transparente para el grid.
+- En print: `.cards-grid { display: block }` + `.print-row { display: flex; page-break-after: always }`.
+- `@page { size: auto; margin: 6mm }` — NO fijar orientación para permitir al usuario elegir.
+- Borde de corte: `outline: 1px dashed rgba(0,0,0,0.28); outline-offset: -4px` en `@media print`.
+
+---
+
+# Instrucciones de estilo — Fortunas y Desgracias
+
+## Dimensiones
+
+- Tarjeta horizontal: **9×5.8 cm** (ancho × alto).
+- Barra superior fina (1.1 cm) con etiqueta "FORTUNA" / "DESGRACIA" en negro sobre fondo transparente.
+- Cuerpo: texto izquierda (58%) + placeholder de imagen derecha (38%).
+
+## Toggle de color de fondo
+
+- Sin color (default): fondo blanco — para imprimir en papel de color.
+- Con color:
+  - Fortuna: `#fffbe6` (amarillo claro)
+  - Desgracia: `#fff0d6` (naranja claro)
+- Clase `.fyd-colores` en `.fyd-grid`; persistida en `localStorage`.
+
+## Impresión
+
+- 3 por fila, landscape, `@page margin: 3mm`.
+- `.fyd-print-row { display: flex; page-break-inside: avoid }` — sin page-break-after (múltiples filas por página).
+
+---
+
+# Instrucciones de estilo — Reversos
+
+## Dimensiones
+
+- Mismo tamaño que fortunas/desgracias: **9×5.8 cm**.
+- Sin color (default): fondo blanco, borde negro, caja interior con fondo claro (amarillo/rosa).
+- Con color: fondo sólido (fortuna `#e09c10`, desgracia `#7A1A1A`), caja interior transparente, texto blanco.
+- Toggle clase `.reverso-colores` en `.fyd-grid`; key localStorage: `reversoColor`.
+
+## Controles UI (ocultos en print)
+
+- Selector de tipo (Fortunas / Desgracias)
+- Input de cantidad
+- Contador: `ceil(cantidad / 9)` páginas
+
+---
+
+# Instrucciones de estilo — Billetes
+
+## Dimensiones
+
+- Imagen original: **10×5 cm** (landscape).
+- Mostrados rotados 90°: **5×10 cm** (portrait).
+- Técnica CSS: contenedor `width:5cm; height:10cm; overflow:hidden` + imagen `transform: translate(-50%,-50%) rotate(90deg)`.
+
+## Layout de impresión
+
+- 5 por fila × 2 filas = **10 por página** en landscape.
+- `@page margin: 3mm`.
+- Agrupados en `.bill-print-row` (5 por row).
+- Contador: `ceil(cantidad / 10)` páginas.
+
+## Archivos de imagen
+
+`static/billetes/1.png`, `5.png`, `10.png`, `20.png`, `50.png`, `100.png`, `500.png`
+
+---
+
+# Reglas generales para Copilot
+
+1. **No agregar comentarios ni docstrings** a código existente que no se modifica.
+2. **No refactorizar** fuera del alcance de la tarea solicitada.
+3. **Siempre usar `multi_replace_string_in_file`** para ediciones múltiples independientes.
+4. **Siempre actualizar el nav** en todos los templates cuando se agregue o renombre una sección.
+5. **Ocultar todo el UI en `@media print`**: nav, controles, toggles, botones — usar `display: none !important`.
+6. **`print-color-adjust: exact`** en cualquier elemento con background de color que deba imprimirse.
+7. **Bordes de corte** solo en `@media print` con `outline: 1px dashed` y `outline-offset: -4px`.
+8. **`@page size: auto`** — nunca forzar orientación desde CSS para no bloquear el diálogo del navegador. Solo fijar márgenes.
+
 
 ## Objetivo
 

@@ -4,7 +4,7 @@ from flask import Flask, render_template
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CSV_FILE = os.path.join(BASE_DIR, "props.csv")
+CSV_FILE = os.path.join(BASE_DIR, "data", "props.csv")
 
 COLOR_MAP = {
     "cafe": "#8b5a2b",
@@ -68,13 +68,13 @@ def index():
 
 @app.route("/fortunas")
 def fortunas():
-    fortunas = read_cards(os.path.join(BASE_DIR, "fortunas.csv"), "fortuna")
+    fortunas = read_cards(os.path.join(BASE_DIR, "data", "fortunas.csv"), "fortuna")
     return render_template("fortunas.html", fortunas=fortunas, section="fortunas")
 
 
 @app.route("/desgracias")
 def desgracias():
-    desgracias = read_cards(os.path.join(BASE_DIR, "desgracias.csv"), "desgracia")
+    desgracias = read_cards(os.path.join(BASE_DIR, "data", "desgracias.csv"), "desgracia")
     return render_template("desgracias.html", desgracias=desgracias, section="desgracias")
 
 

@@ -328,6 +328,11 @@ body {
   text-transform: uppercase;
 }
 
+/* On screen, print-row is transparent to the grid layout */
+.print-row {
+  display: contents;
+}
+
 @media print {
   /* Allow browser to choose orientation (don't force portrait/landscape) */
   @page { size: auto; margin: 6mm; }
@@ -363,19 +368,28 @@ body {
     padding: 0 !important;
   }
 
+  /* Switch to block so .print-row flex handles layout per page */
   .cards-grid {
+    display: block;
     padding: 0;
-    gap: 0.4rem 1px; /* small vertical gap, 1px horizontal for printing */
-    box-shadow: none;
-    justify-items: start; /* pack items from left to reduce extra gaps */
-    grid-template-columns: repeat(4, 6.5cm); /* ensure exactly 4 columns when printing */
-    grid-auto-rows: auto;
   }
 
-  /* Ensure 4 columns per printed page and spacing after each 4-card row */
-  .cards-grid { grid-template-columns: repeat(4, 6.5cm); }
-  .card { break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; }
-  .card:nth-child(4n) { margin-bottom: 4cm; page-break-after: always; break-after: page; }
+  /* Each row of 4 cards: flex row, stays on one page, breaks after */
+  .print-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1px;
+    margin-bottom: 4cm;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .print-row:last-child {
+    margin-bottom: 0;
+    page-break-after: auto;
+    break-after: auto;
   }
 
   .card,
@@ -386,6 +400,7 @@ body {
 
   .card {
     page-break-inside: avoid;
+    break-inside: avoid;
     margin: 0;
   }
 }

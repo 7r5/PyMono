@@ -31,6 +31,7 @@
 
   <main class="cards-grid">
     {% for prop in properties %}
+      {% if loop.index0 % 4 == 0 %}<div class="print-row">{% endif %}
       <article class="card">
         <section class="card-face card-front">
           <div class="card-bar" style="--card-color: {{ prop.display_color }}; background-color: var(--card-color);">
@@ -115,6 +116,7 @@
           </div>
         </section>
       </article>
+      {% if loop.index0 % 4 == 3 or loop.last %}</div>{% endif %}
     {% endfor %}
   </main>
 </body>

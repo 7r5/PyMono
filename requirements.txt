@@ -2,3 +2,6 @@ Flask>=2.3
 reportlab
 openai>=1.0
 python-dotenv
+Pillow>=9.0
+requests>=2.31
+urllib3>=2.0

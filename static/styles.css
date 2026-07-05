@@ -561,6 +561,28 @@ body {
   color: #111111;
 }
 
+#model-select {
+  padding: 0.4rem 0.8rem;
+  border: 2px solid #e2e2e2;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  background: #ffffff;
+  color: #111111;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+#model-select:hover {
+  border-color: #111111;
+}
+
+#model-select:focus {
+  outline: none;
+  border-color: #111111;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+}
+
 .pages-info {
   font-size: 0.82rem;
   font-weight: 600;
@@ -659,6 +681,10 @@ body {
 
 .td-img {
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
 }
 
 .img-thumb {
@@ -685,14 +711,56 @@ body {
 }
 
 .img-error-badge {
-  display: inline-block;
-  padding: 0.2rem 0.5rem;
-  background: #fdecea;
-  color: #c62828;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  min-height: 80px;
+  padding: 0.3rem 0.6rem;
+  background: #ff5252;
+  color: #ffffff;
   border-radius: 0.4rem;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  cursor: help;
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.img-error-badge:hover {
+  background: #ff1744;
+  text-decoration: underline;
+}
+
+.img-error-badge:focus {
+  outline: 2px solid #ff5252;
+  outline-offset: 2px;
+}
+
+/* Error detail row */
+.img-error-row td {
+  padding: 0.8rem 1rem !important;
+  background: #fafafa;
+}
+
+.error-detail {
+  background: #ffebee;
+  border-left: 4px solid #ff5252;
+  padding: 0.8rem;
+  border-radius: 0.3rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.error-detail strong {
+  color: #c62828;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-family: 'Monaco', 'Courier New', monospace;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 /* Spinner */
@@ -726,6 +794,24 @@ body {
 .btn-generar:disabled {
   opacity: 0.38;
   cursor: not-allowed;
+}
+
+/* Cancel button */
+.btn-cancelar {
+  border: none;
+  background: #ff5252;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+  margin-left: 0.5rem;
+}
+
+.btn-cancelar:hover {
+  opacity: 0.85;
 }
 
 .btn-gen-one {

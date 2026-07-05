@@ -3,8 +3,10 @@ import hashlib
 import json
 import os
 import threading
-import urllib.request
 
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 
@@ -16,6 +18,7 @@ CSV_FILE = os.path.join(BASE_DIR, "data", "props.csv")
 IMAGENES_JSON = os.path.join(BASE_DIR, "data", "imagenes.json")
 IMAGES_DIR = os.path.join(BASE_DIR, "static", "images")
 _lock = threading.Lock()
+_cancel_generation = False
 
 COLOR_MAP = {
     "cafe": "#8b5a2b",
@@ -136,10 +139,13 @@ def todas_las_cartas():
     return cards
 
 
-def _generar_en_background(hashes, prompt_estilo):
-    """Background thread: calls OpenAI DALL-E 3 for each hash and saves images."""
+def _generar_en_background(hashes, prompt_estilo, model="dall-e-2"):
+    """Background thread: calls OpenAI DALL-E and removes white backgrounds for transparency."""
+    global _cancel_generation
     try:
         from openai import OpenAI
+        from PIL import Image
+        from io import BytesIO
         client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     except Exception as e:
         data = leer_imagenes()
@@ -151,6 +157,14 @@ def _generar_en_background(hashes, prompt_estilo):
         return
 
     for h in hashes:
+        # Check if generation was cancelled
+        if _cancel_generation:
+            data = leer_imagenes()
+            if h in data and data[h]["estado"] == "generando":
+                data[h]["estado"] = "pendiente"
+            guardar_imagenes(data)
+            continue
+        
         data = leer_imagenes()
         if h not in data:
             continue
@@ -159,16 +173,58 @@ def _generar_en_background(hashes, prompt_estilo):
         prompt = f"{prompt_estilo}\n\nContexto de la tarjeta ({tipo}): {texto}"
         try:
             response = client.images.generate(
-                model="dall-e-3",
+                model=model,
                 prompt=prompt,
                 size="1024x1024",
-                quality="standard",
                 n=1,
             )
+            
+            # Validate response structure
+            if not response or not response.data or len(response.data) == 0:
+                raise Exception(f"OpenAI returned empty response for model '{model}'")
+            
             url = response.data[0].url
+            if not url or url == "None":
+                raise Exception(f"OpenAI returned invalid/null URL. Check if model '{model}' exists and API quota is available")
+            
+            # Download image with automatic retries
+            session = requests.Session()
+            retry_strategy = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+            adapter = HTTPAdapter(max_retries=retry_strategy)
+            session.mount("https://", adapter)
+            
+            try:
+                response_img = session.get(url, timeout=60)
+                response_img.raise_for_status()
+                img_data = response_img.content
+                if not img_data:
+                    raise Exception("Downloaded empty image data from OpenAI URL")
+            except requests.exceptions.RequestException as e:
+                raise Exception(f"Failed to download image from OpenAI after retries: {str(e)}")
+            
+            # Convert white background to transparent
+            img = Image.open(BytesIO(img_data))
+            
+            # Convert to RGBA if not already
+            img = img.convert("RGBA")
+            data_arr = img.getdata()
+            new_data = []
+            
+            # Replace near-white pixels with transparent
+            for item in data_arr:
+                # If pixel is near white (R,G,B > 240), make it transparent
+                if item[0] > 240 and item[1] > 240 and item[2] > 240:
+                    new_data.append((255, 255, 255, 0))  # transparent
+                else:
+                    new_data.append(item)
+            
+            img.putdata(new_data)
+            
+            # Save as PNG with transparency
             filename = f"{tipo}_{h}.png"
             filepath = os.path.join(IMAGES_DIR, filename)
-            urllib.request.urlretrieve(url, filepath)
+            img.save(filepath, "PNG")
+            
             data = leer_imagenes()
             data[h]["imagen"] = f"/static/images/{filename}"
             data[h]["estado"] = "completado"
@@ -218,9 +274,13 @@ def api_imagenes_estado():
 
 @app.route("/api/generar", methods=["POST"])
 def api_generar():
+    global _cancel_generation
+    _cancel_generation = False  # Reset cancel flag when new generation starts
+    
     body = request.get_json()
     hashes = body.get("hashes", [])
     prompt_estilo = body.get("prompt_estilo", "")
+    model = body.get("model", "dall-e-2")
 
     if not hashes:
         return jsonify({"error": "No hashes provided"}), 400
@@ -242,10 +302,49 @@ def api_generar():
     guardar_imagenes(data)
 
     # Launch background thread
-    t = threading.Thread(target=_generar_en_background, args=(hashes, prompt_estilo), daemon=True)
+    t = threading.Thread(target=_generar_en_background, args=(hashes, prompt_estilo, model), daemon=True)
     t.start()
 
     return jsonify({"ok": True, "generando": len(hashes)}), 202
+
+
+@app.route("/api/cancelar", methods=["POST"])
+def api_cancelar():
+    """Cancel all pending image generation."""
+    global _cancel_generation
+    _cancel_generation = True
+    return jsonify({"ok": True, "mensaje": "Cancelación solicitada"}), 200
+
+
+@app.route("/api/modelos")
+def api_modelos():
+    """List all available image generation models from OpenAI."""
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        models = client.models.list()
+        
+        # Filter for image generation models
+        imagen_models = []
+        for model in models:
+            model_id = model.id
+            # Include GPT Image models and DALL-E models
+            if 'gpt-image' in model_id or 'dall-e' in model_id:
+                imagen_models.append({
+                    "id": model_id,
+                    "owned_by": getattr(model, 'owned_by', 'unknown'),
+                })
+        
+        return jsonify({
+            "ok": True,
+            "modelos": imagen_models,
+            "total": len(imagen_models),
+        })
+    except Exception as e:
+        return jsonify({
+            "ok": False,
+            "error": str(e),
+        }), 400
 
 
 if __name__ == "__main__":

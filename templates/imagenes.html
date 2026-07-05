@@ -10,10 +10,11 @@
   <header class="app-header">
     <div>
       <h1>PyMono</h1>
-      <p>Gestión de imágenes IA — DALL-E 3 vía OpenAI.</p>
+      <p>Gestión de imágenes IA — GPT Image vía OpenAI.</p>
     </div>
     <div class="actions">
       <button id="btn-generar" class="btn-generar" disabled>Generar seleccionadas</button>
+      <button id="btn-cancelar" class="btn-cancelar" style="display:none">Cancelar</button>
     </div>
   </header>
 
@@ -35,6 +36,7 @@
       <button class="tipo-btn" data-filter="con">Con imagen</button>
       <button class="tipo-btn" data-filter="sin">Sin imagen</button>
     </div>
+
     <div class="control-group">
       <label class="control-label">
         <input type="checkbox" id="chk-todas"> Seleccionar visibles
@@ -82,7 +84,7 @@
             {% elif card.estado == "generando" %}
               <span class="img-spinner"></span>
             {% elif card.estado == "error" %}
-              <span class="img-error-badge" title="{{ card.error }}">Error</span>
+              <span class="img-error-badge" role="button" tabindex="0">Error</span>
             {% else %}
               <span class="img-placeholder">IMG</span>
             {% endif %}
@@ -94,13 +96,29 @@
             </button>
           </td>
         </tr>
+        <tr class="img-error-row" data-hash="{{ card.hash }}" style="display:none">
+          <td colspan="5">
+            <div class="error-detail">
+              <strong>Error:</strong> <span class="error-message">{{ card.error or 'Error desconocido' }}</span>
+            </div>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 
   <script>
-    const PRICE_PER_IMAGE = 0.04; // DALL-E 3 standard
+    const MODEL_ID = 'gpt-image-2';
+    const MODEL_PRICE = 0.080;
+
+    function getCurrentModel() {
+      return MODEL_ID;
+    }
+
+    function getPricePerImage() {
+      return MODEL_PRICE;
+    }
 
     // ── Selection ────────────────────────────────────────────────
     function visibleRows() {
@@ -120,7 +138,7 @@
       btn.disabled = n === 0;
       if (n > 0) {
         badge.style.display = '';
-        costText.textContent = `${n} tarjeta${n !== 1 ? 's' : ''} · ~$${(n * PRICE_PER_IMAGE).toFixed(2)} USD`;
+        costText.textContent = `${n} tarjeta${n !== 1 ? 's' : ''} · ~$${(n * getPricePerImage()).toFixed(2)} USD`;
       } else {
         badge.style.display = 'none';
       }
@@ -160,6 +178,7 @@
     async function generar(hashes) {
       if (!hashes.length) return;
       const prompt = document.getElementById('prompt-estilo').value.trim();
+      const model = getCurrentModel();
 
       // Show spinners immediately
       hashes.forEach(h => setRowEstado(h, 'generando'));
@@ -167,7 +186,7 @@
       const res = await fetch('/api/generar', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({hashes, prompt_estilo: prompt}),
+        body: JSON.stringify({hashes, prompt_estilo: prompt, model}),
       });
       if (!res.ok) {
         hashes.forEach(h => setRowEstado(h, 'error'));
@@ -202,9 +221,24 @@
         setRowEstado(hash, entry.estado, entry.imagen, entry.error);
         if (entry.estado === 'generando') anyGenerating = true;
       }
+      updateCancelButton(anyGenerating);
       if (!anyGenerating) {
         clearInterval(pollTimer);
         pollTimer = null;
+      }
+    }
+
+    function updateCancelButton(isGenerating) {
+      const btn = document.getElementById('btn-cancelar');
+      btn.style.display = isGenerating ? '' : 'none';
+    }
+
+    async function cancelGeneration() {
+      if (confirm('¿Cancelar todas las generaciones en progreso?')) {
+        await fetch('/api/cancelar', {method: 'POST'});
+        clearInterval(pollTimer);
+        pollTimer = null;
+        updateCancelButton(false);
       }
     }
 
@@ -214,17 +248,50 @@
       row.dataset.estado = estado;
       const tdImg = row.querySelector('.td-img');
       const btnGen = row.querySelector('.btn-gen-one');
+      const errorRow = document.querySelector(`.img-error-row[data-hash=\"${hash}\"]`);
+      
       if (estado === 'generando') {
-        tdImg.innerHTML = '<span class="img-spinner"></span>';
+        tdImg.innerHTML = '<span class=\"img-spinner\"></span>';
         if (btnGen) btnGen.disabled = true;
+        if (errorRow) errorRow.style.display = 'none';
       } else if (estado === 'completado' && imagen) {
-        tdImg.innerHTML = `<img src="${imagen}" class="img-thumb" alt="imagen">`;
+        tdImg.innerHTML = `<img src=\"${imagen}\" class=\"img-thumb\" alt=\"imagen\">`;
         if (btnGen) { btnGen.disabled = false; btnGen.textContent = '↺ Regenerar'; }
+        if (errorRow) errorRow.style.display = 'none';
       } else if (estado === 'error') {
-        tdImg.innerHTML = `<span class="img-error-badge" title="${error || ''}">Error</span>`;
+        const badge = document.createElement('span');
+        badge.className = 'img-error-badge';
+        badge.setAttribute('role', 'button');
+        badge.setAttribute('tabindex', '0');
+        badge.textContent = 'Error';
+        tdImg.innerHTML = '';
+        tdImg.appendChild(badge);
         if (btnGen) { btnGen.disabled = false; btnGen.textContent = 'Reintentar'; }
+        if (errorRow) {
+          errorRow.style.display = '';
+          const errorMsg = errorRow.querySelector('.error-message');
+          if (errorMsg) errorMsg.textContent = error || 'Error desconocido';
+        }
       }
     }
+    
+    // ── Error row toggle ─────────────────────────────────────    document.getElementById('btn-cancelar').addEventListener('click', cancelGeneration);
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('img-error-badge')) {
+        const row = e.target.closest('.img-row');
+        const hash = row.dataset.hash;
+        const errorRow = document.querySelector(`.img-error-row[data-hash=\"${hash}\"]`);
+        if (errorRow) {
+          errorRow.style.display = errorRow.style.display === 'none' ? '' : 'none';
+        }
+      }
+    });
+    
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.target.classList.contains('img-error-badge')) {
+        e.target.click();
+      }
+    });
 
     // Start polling if any are already generating on page load
     const generando = [...document.querySelectorAll('.img-row[data-estado="generando"]')];

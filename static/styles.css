@@ -54,20 +54,20 @@ body {
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(7cm, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(6.5cm, 1fr));
   gap: 1rem 1px; /* row-gap column-gap: keep vertical spacing, reduce horizontal to 1px */
   padding: 1.5rem 2rem 2rem;
   justify-items: center;
 }
 
 .card {
-  width: 7cm;
+  width: 6.5cm;
   display: grid;
   gap: 1rem;
 }
 
 .card-face {
-  width: 7cm;
+  width: 6.5cm;
   height: 8cm;
   max-height: 8cm;
   border-radius: 1rem;
@@ -229,6 +229,7 @@ body {
   display: grid;
   gap: 0.25rem;
   padding: 0.35rem 0.85rem 0.75rem;
+  text-align: center;
 }
 
 .mortgage-row,
@@ -254,8 +255,9 @@ body {
 .construction-text,
 .back-meta {
   color: #111111;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   line-height: 1.35;
+  align-items: center;
 }
 
 .card-back {
@@ -366,8 +368,14 @@ body {
     gap: 0.4rem 1px; /* small vertical gap, 1px horizontal for printing */
     box-shadow: none;
     justify-items: start; /* pack items from left to reduce extra gaps */
-    grid-template-columns: repeat(auto-fill, 7cm); /* ensure fixed 7cm columns when printing */
+    grid-template-columns: repeat(4, 6.5cm); /* ensure exactly 4 columns when printing */
     grid-auto-rows: auto;
+  }
+
+  /* Ensure 4 columns per printed page and spacing after each 4-card row */
+  .cards-grid { grid-template-columns: repeat(4, 6.5cm); }
+  .card { break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; }
+  .card:nth-child(4n) { margin-bottom: 4cm; page-break-after: always; break-after: page; }
   }
 
   .card,

@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="/static/styles.css">
   <style>
     @media print {
+      /* Override global @page: 3mm margins so 3×9cm fits on landscape letter (26.74cm→27.34cm) */
+      @page { size: auto; margin: 3mm; }
       .app-header, .app-header *,
       .section-nav, .section-nav *,
       .btn-color, .actions, .actions * {
@@ -40,7 +42,7 @@
 
   <main class="fyd-grid">
     {% for card in cards %}
-      {% if loop.index0 % 2 == 0 %}<div class="fyd-print-row">{% endif %}
+      {% if loop.index0 % 3 == 0 %}<div class="fyd-print-row">{% endif %}
       <article class="fyd-card fyd-card--{{ card.tipo }}">
         <div class="fyd-bar">
           <span class="fyd-tipo">{{ "FORTUNA" if card.tipo == "fortuna" else "DESGRACIA" }}</span>
@@ -52,7 +54,7 @@
           </div>
         </div>
       </article>
-      {% if loop.index0 % 2 == 1 or loop.last %}</div>{% endif %}
+      {% if loop.index0 % 3 == 2 or loop.last %}</div>{% endif %}
     {% endfor %}
   </main>
 

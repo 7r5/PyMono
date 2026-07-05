@@ -600,6 +600,9 @@ body {
   }
 
   .fyd-card {
+    flex: 0 0 9cm;   /* prevent stretching in flex row */
+    width: 9cm;
+    height: 5.8cm;
     box-shadow: none;
     break-inside: avoid;
     outline: 1px dashed rgba(0, 0, 0, 0.28);

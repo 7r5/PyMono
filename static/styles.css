@@ -558,7 +558,7 @@ body {
     margin: 0;
     /* Borde de corte: visible solo en impresión */
     outline: 1px dashed rgba(0, 0, 0, 0.28);
-    outline-offset: 2px;
+    outline-offset: -4px;
   }
 
   /* ── Fortunas y Desgracias — print ─────────────── */
@@ -585,6 +585,6 @@ body {
     box-shadow: none;
     break-inside: avoid;
     outline: 1px dashed rgba(0, 0, 0, 0.28);
-    outline-offset: 2px;
+    outline-offset: -4px;
   }
 }

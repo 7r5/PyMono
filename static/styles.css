@@ -565,12 +565,27 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: 0 10px 20px rgba(17, 17, 17, 0.10);
+  background: #ffffff;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
-.fyd-reverso--fortuna   { background: #e09c10; }
-.fyd-reverso--desgracia { background: #7A1A1A; }
+/* Default (no color): colored border + colored text */
+.fyd-reverso--fortuna   { border: 3px solid #e09c10; }
+.fyd-reverso--desgracia { border: 3px solid #7A1A1A; }
+
+.fyd-reverso--fortuna   .fyd-reverso-label { color: #e09c10; }
+.fyd-reverso--desgracia .fyd-reverso-label { color: #7A1A1A; }
+
+.fyd-reverso--fortuna   .fyd-reverso-inner { border-color: rgba(224, 156, 16, 0.35); }
+.fyd-reverso--desgracia .fyd-reverso-inner { border-color: rgba(122, 26, 26, 0.35); }
+
+/* Color mode active */
+.fyd-grid.reverso-colores .fyd-reverso--fortuna   { background: #e09c10; border-color: #e09c10; }
+.fyd-grid.reverso-colores .fyd-reverso--desgracia { background: #7A1A1A; border-color: #7A1A1A; }
+
+.fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-label { color: #ffffff; }
+.fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-inner  { border-color: rgba(255, 255, 255, 0.4); }
 
 .fyd-reverso-inner {
   border: 3px solid rgba(255, 255, 255, 0.4);

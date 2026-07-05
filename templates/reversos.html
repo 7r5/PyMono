@@ -29,6 +29,7 @@
       <p>Reversos de Fortunas y Desgracias — 9×5.8 cm.</p>
     </div>
     <div class="actions">
+      <button id="btn-color-reverso" class="btn-color">✦ Con color de fondo</button>
       <button onclick="window.print()">Imprimir / Guardar PDF</button>
     </div>
   </header>
@@ -93,6 +94,20 @@
     });
 
     renderCards();
+
+    // Color toggle
+    const btnColor = document.getElementById('btn-color-reverso');
+    function setColorMode(activo) {
+      grid.classList.toggle('reverso-colores', activo);
+      btnColor.classList.toggle('is-active', activo);
+      btnColor.textContent = activo ? '✦ Sin color de fondo' : '✦ Con color de fondo';
+    }
+    setColorMode(localStorage.getItem('reversoColor') === '1');
+    btnColor.addEventListener('click', () => {
+      const activo = !grid.classList.contains('reverso-colores');
+      localStorage.setItem('reversoColor', activo ? '1' : '0');
+      setColorMode(activo);
+    });
   </script>
 </body>
 </html>

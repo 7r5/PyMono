@@ -198,51 +198,19 @@ body {
 .icon {
   width: 0.7rem;
   height: 0.7rem;
-  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  flex: 0 0 auto;
 }
 
-.icon::before,
-.icon::after {
-  content: "";
-  position: absolute;
-  display: block;
-}
-
-.house::before {
-  width: 0.7rem;
-  height: 0.36rem;
+.icon.house {
   background: #24B04A;
   border-radius: 0.12rem 0.12rem 0 0;
-  bottom: 0;
-  left: 0;
 }
 
-.house::after {
-  width: 0;
-  height: 0;
-  border-left: 0.35rem solid transparent;
-  border-right: 0.35rem solid transparent;
-  border-bottom: 0.28rem solid #24B04A;
-  top: 0;
-  left: 0;
-}
-
-.hotel::before {
-  width: 0.7rem;
-  height: 0.7rem;
+.icon.hotel {
   background: #D62828;
   border-radius: 0.12rem;
-  top: 0;
-  left: 0;
-}
-
-.hotel::after {
-  width: 0.13rem;
-  height: 0.13rem;
-  background: #ffffff;
-  top: 0.19rem;
-  left: 0.16rem;
-  box-shadow: 0.18rem 0 0 #ffffff, 0.36rem 0 0 #ffffff, 0 0.18rem 0 #ffffff, 0.18rem 0.18rem 0 #ffffff, 0.36rem 0.18rem 0 #ffffff;
 }
 
 .separator {

@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Montserrat:wght@400;600;700;800&display=swap');
+
 :root {
-  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Inter", "Montserrat", "Segoe UI", Arial, sans-serif;
   color: #111111;
   background: #f4f5f7;
 }
@@ -66,29 +68,34 @@ body {
 
 .card-face {
   width: 7cm;
-  height: 8cm;
+  min-height: 8cm;
   border-radius: 1rem;
-  overflow: hidden;
   background: #ffffff;
   border: 1px solid rgba(17, 17, 17, 0.12);
   box-shadow: 0 12px 22px rgba(17, 17, 17, 0.06);
   display: grid;
   grid-template-rows: auto 1fr;
+  overflow: visible;
+  color: #111111;
 }
 
 .card-bar {
-  height: 1.4cm;
-  width: 100%;
+  height: 1.5cm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.65rem;
 }
 
 .card-head {
-  padding: 0.95rem 0.95rem 0.7rem;
+  padding: 0.4rem 0.4rem 0.35rem;
   text-align: center;
+  color: white;
 }
 
 .card-head h2 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   line-height: 1.1;
   letter-spacing: 0.08em;
   font-weight: 800;
@@ -97,7 +104,7 @@ body {
 
 .card-city {
   margin: 0.35rem 0 0;
-  color: #666666;
+  color: rgba(255, 255, 255, 0.92);
   font-size: 0.78rem;
   letter-spacing: 0.04em;
 }
@@ -118,14 +125,14 @@ body {
 .mortgage-block,
 .construction-block,
 .back-mortgage-block {
-  padding: 0.85rem 0.95rem;
+  padding: 0.75rem 0.85rem;
 }
 
 .rent-block {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 0.75rem;
+  gap: 0.65rem;
 }
 
 .rent-label,
@@ -133,7 +140,7 @@ body {
 .back-mortgage-label,
 .table-header span {
   color: #111111;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -143,24 +150,25 @@ body {
 .mortgage-value,
 .back-mortgage-value {
   color: #111111;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 800;
 }
 
 .table-block {
   display: grid;
-  gap: 0.4rem;
-  padding-top: 0.85rem;
-  padding-bottom: 0.85rem;
+  gap: 0.3rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .table-row {
   display: grid;
   grid-template-columns: 1.5fr 0.9fr 0.9fr;
-  gap: 0.75rem;
+  gap: 0.65rem;
   align-items: center;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   color: #111111;
+  line-height: 1.2;
 }
 
 .table-row strong,
@@ -169,43 +177,79 @@ body {
 }
 
 .table-header {
-  color: #666666;
+  color: #111111;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
 }
 
 .icon-row {
   display: flex;
   justify-content: center;
-  gap: 0.3rem;
+  gap: 0.22rem;
 }
 
 .icon {
-  width: 0.68rem;
-  height: 0.68rem;
-  border-radius: 0.18rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  position: relative;
 }
 
-.house {
+.icon::before,
+.icon::after {
+  content: "";
+  position: absolute;
+  display: block;
+}
+
+.house::before {
+  width: 0.7rem;
+  height: 0.36rem;
   background: #24B04A;
+  border-radius: 0.12rem 0.12rem 0 0;
+  bottom: 0;
+  left: 0;
 }
 
-.hotel {
+.house::after {
+  width: 0;
+  height: 0;
+  border-left: 0.35rem solid transparent;
+  border-right: 0.35rem solid transparent;
+  border-bottom: 0.28rem solid #24B04A;
+  top: 0;
+  left: 0;
+}
+
+.hotel::before {
+  width: 0.7rem;
+  height: 0.7rem;
   background: #D62828;
+  border-radius: 0.12rem;
+  top: 0;
+  left: 0;
+}
+
+.hotel::after {
+  width: 0.13rem;
+  height: 0.13rem;
+  background: #ffffff;
+  top: 0.19rem;
+  left: 0.16rem;
+  box-shadow: 0.18rem 0 0 #ffffff, 0.36rem 0 0 #ffffff, 0 0.18rem 0 #ffffff, 0.18rem 0.18rem 0 #ffffff, 0.36rem 0.18rem 0 #ffffff;
 }
 
 .separator {
   height: 1px;
   background: rgba(17, 17, 17, 0.08);
-  margin: 0.35rem 0;
+  margin: 0.25rem 0;
 }
 
 .mortgage-block {
   display: grid;
-  gap: 0.45rem;
-  padding-bottom: 0.8rem;
+  gap: 0.35rem;
+  padding-bottom: 0.75rem;
 }
 
 .mortgage-row,
@@ -213,7 +257,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.65rem;
 }
 
 .mortgage-row strong,
@@ -224,19 +268,23 @@ body {
 .construction-block,
 .back-content {
   display: grid;
-  gap: 0.45rem;
-  padding-bottom: 0.85rem;
+  gap: 0.35rem;
+  padding-bottom: 0.75rem;
 }
 
 .construction-text,
 .back-meta {
-  color: #666666;
-  font-size: 0.78rem;
-  line-height: 1.4;
+  color: #111111;
+  font-size: 0.76rem;
+  line-height: 1.35;
 }
 
 .card-back {
   padding: 0.5rem;
+  background: #fde6e8;
+   border: 10px solid #c31f2d;
+.card-back .card-bar {
+  background: rgba(214, 40, 40, 0.18) !important;
 }
 
 .back-head {
@@ -268,7 +316,7 @@ body {
 
 .back-group {
   margin: 0;
-  color: #666666;
+  color: #111111;
   font-size: 0.76rem;
   letter-spacing: 0.05em;
 }
@@ -320,90 +368,6 @@ body {
   }
 }
 
-.card-back {
-  background: #ffffff;
-  border: 1px solid rgba(17, 17, 17, 0.12);
-}
-
-.back-head {
-  padding: 1.2rem 1.2rem 1rem;
-  border-bottom: 1px solid rgba(17, 17, 17, 0.08);
-  text-align: center;
-}
-
-.back-pill {
-  display: inline-block;
-  padding: 0.35rem 0.85rem;
-  border-radius: 999px;
-  background: #f8fafc;
-  color: #111;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.card-back h3 {
-  margin: 0.55rem 0 0.2rem;
-  font-size: 1.15rem;
-  letter-spacing: 0.08em;
-  color: #111;
-}
-
-.back-group {
-  display: block;
-  margin: 0 auto;
-  color: #555;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.back-content {
-  display: grid;
-  gap: 0.75rem;
-  padding: 1rem 1.2rem 1.2rem;
-}
-
-.back-mortgage-block {
-  display: grid;
-  gap: 0.35rem;
-  padding: 0.95rem 1rem;
-  background: #f8fafc;
-  border-radius: 1rem;
-}
-
-.back-mortgage-label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #111;
-}
-
-.back-mortgage-value {
-  font-size: 1rem;
-  font-weight: 800;
-  color: #111;
-}
-
-.back-mortgage-meta {
-  color: #555;
-  font-size: 0.78rem;
-  line-height: 1.4;
-}
-
-.back-footer {
-  padding: 0.85rem 1rem;
-  margin: 0;
-  border-radius: 999px;
-  background: #f8fafc;
-  color: #c31f2d;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 0.16em;
-}
 
 @media print {
   body {

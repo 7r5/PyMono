@@ -21,12 +21,13 @@
     {% for prop in properties %}
       <article class="card">
         <section class="card-face card-front">
-          <div class="card-bar" style="background: {{ prop.display_color }};"></div>
-          <div class="card-head">
-            <h2>{{ prop.titulo }}</h2>
-            {% if prop.ciudad %}
-              <p class="card-city">{{ prop.ciudad }}</p>
-            {% endif %}
+          <div class="card-bar" style="background: {{ prop.display_color }};">
+            <div class="card-head">
+              <h2>{{ prop.titulo }}</h2>
+              {% if prop.ciudad %}
+                <p class="card-city">{{ prop.ciudad }}</p>
+              {% endif %}
+            </div>
           </div>
 
           <section class="rent-block">
@@ -74,17 +75,8 @@
 
           <div class="separator"></div>
 
-          <section class="mortgage-block">
-            <span class="mortgage-title">HIPOTECA</span>
-            <div class="mortgage-row">
-              <span>Valor</span>
-              <strong>${{ prop.hipotecado_por }}</strong>
-            </div>
-          </section>
-
-          <div class="separator"></div>
-
           <section class="construction-block">
+            <span class="mortgage-title">COSTOS DE CONSTRUCCIÓN</span>
             <div class="construction-text">Casas cuestan ${{ prop.costo_casa }} cada una</div>
             <div class="construction-text">Hotel cuesta ${{ prop.costo_hotel }} + 4 casas</div>
           </section>
@@ -93,7 +85,7 @@
         <section class="card-face card-back">
           <div class="card-bar" style="background: {{ prop.display_color }};"></div>
           <div class="back-head">
-            <span class="back-pill">HIPOTECAR</span>
+            <span class="back-pill">HIPOTECADO</span>
             <h3>{{ prop.titulo }}</h3>
             {% if prop.grupo %}
               <p class="back-group">{{ prop.grupo }}</p>
@@ -110,9 +102,6 @@
                 <strong>${{ prop.para_deshipotecar }}</strong>
               </div>
             </section>
-            <div class="back-meta">Casas ${{ prop.costo_casa }} c/u</div>
-            <div class="back-meta">Hotel ${{ prop.costo_hotel }} + 4 casas</div>
-            <div class="back-footer">DESHIPOTECAR</div>
           </div>
         </section>
       </article>

@@ -71,14 +71,32 @@ def wrap_text(text, max_chars):
 def draw_house_icon(c, x, y, color):
     c.saveState()
     c.setFillColorRGB(*color)
-    c.roundRect(x, y, 0.34 * cm, 0.34 * cm, 0.07 * cm, fill=1, stroke=0)
+    house_body_height = 0.22 * cm
+    house_body_width = 0.34 * cm
+    c.roundRect(x, y, house_body_width, house_body_height, 0.05 * cm, fill=1, stroke=0)
+    path = c.beginPath()
+    path.moveTo(x - 0.02 * cm, y + house_body_height)
+    path.lineTo(x + house_body_width / 2, y + house_body_height + 0.18 * cm)
+    path.lineTo(x + house_body_width + 0.02 * cm, y + house_body_height)
+    path.close()
+    c.drawPath(path, fill=1, stroke=0)
     c.restoreState()
 
 
 def draw_hotel_icon(c, x, y, color):
     c.saveState()
     c.setFillColorRGB(*color)
-    c.rect(x, y, 0.42 * cm, 0.34 * cm, fill=1, stroke=0)
+    hotel_width = 0.38 * cm
+    hotel_height = 0.38 * cm
+    c.roundRect(x, y, hotel_width, hotel_height, 0.05 * cm, fill=1, stroke=0)
+    c.setFillColorRGB(1, 1, 1)
+    window_size = 0.08 * cm
+    window_gap = 0.08 * cm
+    for row in range(2):
+        for col in range(2):
+            wx = x + 0.08 * cm + col * (window_size + window_gap)
+            wy = y + hotel_height - 0.1 * cm - row * (window_size + window_gap)
+            c.rect(wx, wy, window_size, window_size, fill=1, stroke=0)
     c.restoreState()
 
 
@@ -160,14 +178,13 @@ def draw_front_card(c, x, y, prop):
 
     c.setFont("Helvetica-Bold", 7.5)
     c.setFillColorRGB(0.11, 0.11, 0.11)
-    c.drawString(body_x + 0.18 * cm, current_y, "HIPOTECA")
-    c.drawRightString(price_x, current_y, f"${prop['hipotecado_por']}")
-    current_y -= 0.38 * cm
+    c.drawString(body_x + 0.18 * cm, current_y, "COSTOS DE CONSTRUCCIÓN")
+    current_y -= 0.33 * cm
 
     c.setFont("Helvetica", 7)
     c.setFillColorRGB(0.45, 0.45, 0.45)
     c.drawString(body_x + 0.18 * cm, current_y, f"Casas cuestan ${prop['costo_casa']} cada una")
-    current_y -= 0.3 * cm
+    current_y -= 0.28 * cm
     c.drawString(body_x + 0.18 * cm, current_y, f"Hotel cuesta ${prop['costo_hotel']} + 4 casas")
 
     c.restoreState()
@@ -216,14 +233,6 @@ def draw_back_card(c, x, y, prop):
     c.setFont("Helvetica-Bold", 8)
     c.drawString(section_x, current_y, "Deshipotecar")
     c.drawRightString(section_right, current_y, f"${prop['para_deshipotecar']}")
-    current_y -= 0.55 * cm
-
-    c.setFont("Helvetica", 7)
-    c.setFillColorRGB(0.45, 0.45, 0.45)
-    c.drawString(section_x, current_y, f"Casas ${prop['costo_casa']} cada una")
-    current_y -= 0.3 * cm
-    c.drawString(section_x, current_y, f"Hotel ${prop['costo_hotel']} + 4 casas")
-
     c.restoreState()
 
 

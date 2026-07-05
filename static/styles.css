@@ -577,8 +577,8 @@ body {
 .fyd-reverso--fortuna   .fyd-reverso-label,
 .fyd-reverso--desgracia .fyd-reverso-label { color: #111111; }
 
-.fyd-reverso--fortuna   .fyd-reverso-inner,
-.fyd-reverso--desgracia .fyd-reverso-inner { border-color: rgba(17, 17, 17, 0.3); }
+.fyd-reverso--fortuna   .fyd-reverso-inner { background: #fff8e1; border-color: rgba(17, 17, 17, 0.3); }
+.fyd-reverso--desgracia .fyd-reverso-inner { background: #fdecea; border-color: rgba(17, 17, 17, 0.3); }
 
 /* Color mode active */
 .fyd-grid.reverso-colores .fyd-reverso--fortuna   { background: #e09c10; border-color: #e09c10; }

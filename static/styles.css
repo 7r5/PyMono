@@ -604,6 +604,72 @@ body {
   text-transform: uppercase;
 }
 
+/* ── Billetes ─────────────────────────────────────── */
+.bill-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 2rem 1rem;
+  flex-wrap: wrap;
+}
+
+.denom-btn {
+  padding: 0.42rem 1rem;
+  border-radius: 999px;
+  border: 2px solid #e2e2e2;
+  background: #e2e2e2;
+  color: #555555;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  min-width: 3rem;
+}
+
+.denom-btn--active {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+.bill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 5cm);
+  gap: 1rem 0.5rem;
+  padding: 1.5rem 2rem 2rem;
+  justify-items: center;
+}
+
+/* Transparent on screen so grid layout applies to bill wrappers */
+.bill-print-row {
+  display: contents;
+}
+
+/* Rotated bill: image is 10×5cm landscape, displayed 5×10cm portrait */
+.billete-wrapper {
+  width: 5cm;
+  height: 10cm;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.3rem;
+  box-shadow: 0 8px 18px rgba(17, 17, 17, 0.10);
+  background: #f8f8f8;
+  flex-shrink: 0;
+}
+
+.billete-img {
+  position: absolute;
+  width: 10cm;
+  height: 5cm;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  display: block;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
 @media print {
   /* Allow browser to choose orientation (don't force portrait/landscape) */
   @page { size: auto; margin: 6mm; }
@@ -722,6 +788,35 @@ body {
     flex: 0 0 9cm;   /* prevent stretching in flex row */
     width: 9cm;
     height: 5.8cm;
+    box-shadow: none;
+    break-inside: avoid;
+    outline: 1px dashed rgba(0, 0, 0, 0.28);
+    outline-offset: -4px;
+  }
+
+  /* ── Billetes — print ───────────────────────────── */
+  .bill-controls,
+  .bill-controls * {
+    display: none !important;
+  }
+
+  .bill-grid {
+    display: block;
+    padding: 0;
+  }
+
+  /* 5 bills per row × 2 rows = 10 per landscape page */
+  .bill-print-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1px;
+    margin-bottom: 0.5cm;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .billete-wrapper {
+    flex: 0 0 5cm;
     box-shadow: none;
     break-inside: avoid;
     outline: 1px dashed rgba(0, 0, 0, 0.28);

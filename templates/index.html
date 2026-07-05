@@ -22,7 +22,6 @@
   <header class="app-header">
     <div>
       <h1>PyMono</h1>
-      <p>Tarjetas de propiedad verticales 7×8 cm con estilo Monopoly premium.</p>
     </div>
     <div class="actions">
       <button onclick="window.print()">Imprimir / Guardar PDF</button>
@@ -34,9 +33,11 @@
     <a href="/fortunas" class="nav-tab">Fortunas</a>
     <a href="/desgracias" class="nav-tab">Desgracias</a>
     <a href="/reversos" class="nav-tab">Reversos</a>
-    <span class="nav-tab nav-tab--disabled">Billetes</span>
+    <a href="/billetes" class="nav-tab">Billetes</a>
     <span class="nav-tab nav-tab--disabled">Tablero</span>
   </nav>
+
+  <p class="section-description">Tarjetas de propiedad verticales 7×8 cm con estilo Monopoly premium.</p>
 
   <main class="cards-grid">
     {% for prop in properties %}

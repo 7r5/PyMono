@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyMono - Billetes</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    @media print {
+      /* 3mm margins: 5 bills × 5cm = 25cm < 27.34cm available in landscape */
+      @page { size: auto; margin: 3mm; }
+      .app-header, .app-header *,
+      .section-nav, .section-nav *,
+      .bill-controls, .bill-controls *,
+      .actions, .actions * {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>PyMono</h1>
+      <p>Billetes — 5×10 cm, 10 por página en horizontal.</p>
+    </div>
+    <div class="actions">
+      <button onclick="window.print()">Imprimir / Guardar PDF</button>
+    </div>
+  </header>
+
+  <nav class="section-nav">
+    <a href="/" class="nav-tab">Propiedades</a>
+    <a href="/fortunas" class="nav-tab">Fortunas</a>
+    <a href="/desgracias" class="nav-tab">Desgracias</a>
+    <a href="/reversos" class="nav-tab">Reversos</a>
+    <a href="/billetes" class="nav-tab nav-tab--active">Billetes</a>
+    <span class="nav-tab nav-tab--disabled">Tablero</span>
+  </nav>
+
+  <div class="bill-controls">
+    <div class="control-group">
+      <span class="control-label">Denominación:</span>
+      {% for d in denominaciones %}
+        <button class="denom-btn{% if loop.first %} denom-btn--active{% endif %}"
+                data-denom="{{ d }}">${{ d }}</button>
+      {% endfor %}
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" value="10" min="1" max="100" class="cantidad-input">
+    </div>
+  </div>
+
+  <main class="bill-grid" id="bill-grid"></main>
+
+  <script>
+    let denominacion = '{{ denominaciones[0] }}';
+    let cantidad = 10;
+    const grid = document.getElementById('bill-grid');
+
+    function renderBilletes() {
+      grid.innerHTML = '';
+      for (let i = 0; i < cantidad; i++) {
+        if (i % 5 === 0) {
+          const row = document.createElement('div');
+          row.className = 'bill-print-row';
+          grid.appendChild(row);
+        }
+        const row = grid.lastElementChild;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'billete-wrapper';
+        const img = document.createElement('img');
+        img.src = `/static/billetes/${denominacion}.png`;
+        img.className = 'billete-img';
+        img.alt = `$${denominacion}`;
+        wrapper.appendChild(img);
+        row.appendChild(wrapper);
+      }
+    }
+
+    document.querySelectorAll('.denom-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.denom-btn').forEach(b => b.classList.remove('denom-btn--active'));
+        btn.classList.add('denom-btn--active');
+        denominacion = btn.dataset.denom;
+        renderBilletes();
+      });
+    });
+
+    document.getElementById('cantidad').addEventListener('input', e => {
+      cantidad = Math.max(1, parseInt(e.target.value) || 1);
+      renderBilletes();
+    });
+
+    renderBilletes();
+  </script>
+</body>
+</html>

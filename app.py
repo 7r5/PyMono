@@ -83,5 +83,11 @@ def reversos():
     return render_template("reversos.html", section="reversos")
 
 
+@app.route("/billetes")
+def billetes():
+    denominaciones = [1, 5, 10, 20, 50, 100, 500]
+    return render_template("billetes.html", denominaciones=denominaciones, section="billetes")
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

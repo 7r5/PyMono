@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyMono - Reversos</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    @media print {
+      /* 3mm margins so 3×9cm fits on landscape letter */
+      @page { size: auto; margin: 3mm; }
+      .app-header, .app-header *,
+      .section-nav, .section-nav *,
+      .reverso-controls, .reverso-controls *,
+      .actions, .actions * {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>PyMono</h1>
+      <p>Reversos de Fortunas y Desgracias — 9×5.8 cm.</p>
+    </div>
+    <div class="actions">
+      <button onclick="window.print()">Imprimir / Guardar PDF</button>
+    </div>
+  </header>
+
+  <nav class="section-nav">
+    <a href="/" class="nav-tab">Propiedades</a>
+    <a href="/fortunas" class="nav-tab">Fortunas</a>
+    <a href="/desgracias" class="nav-tab">Desgracias</a>
+    <a href="/reversos" class="nav-tab nav-tab--active">Reversos</a>
+    <span class="nav-tab nav-tab--disabled">Billetes</span>
+    <span class="nav-tab nav-tab--disabled">Tablero</span>
+  </nav>
+
+  <div class="reverso-controls">
+    <div class="control-group">
+      <span class="control-label">Tipo:</span>
+      <button class="tipo-btn tipo-btn--active" data-tipo="fortuna">Fortunas</button>
+      <button class="tipo-btn" data-tipo="desgracia">Desgracias</button>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" value="9" min="1" max="99" class="cantidad-input">
+    </div>
+  </div>
+
+  <main class="fyd-grid" id="reverso-grid"></main>
+
+  <script>
+    let tipo = 'fortuna';
+    let cantidad = 9;
+
+    function renderCards() {
+      const grid = document.getElementById('reverso-grid');
+      grid.innerHTML = '';
+      const label = tipo === 'fortuna' ? 'FORTUNA' : 'DESGRACIA';
+      for (let i = 0; i < cantidad; i++) {
+        if (i % 3 === 0) {
+          const row = document.createElement('div');
+          row.className = 'fyd-print-row';
+          grid.appendChild(row);
+        }
+        const row = grid.lastElementChild;
+        const card = document.createElement('article');
+        card.className = `fyd-reverso fyd-reverso--${tipo}`;
+        card.innerHTML = `<div class="fyd-reverso-inner"><span class="fyd-reverso-label">${label}</span></div>`;
+        row.appendChild(card);
+      }
+    }
+
+    document.querySelectorAll('.tipo-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('tipo-btn--active'));
+        btn.classList.add('tipo-btn--active');
+        tipo = btn.dataset.tipo;
+        renderCards();
+      });
+    });
+
+    document.getElementById('cantidad').addEventListener('input', e => {
+      cantidad = Math.max(1, parseInt(e.target.value) || 1);
+      renderCards();
+    });
+
+    renderCards();
+  </script>
+</body>
+</html>

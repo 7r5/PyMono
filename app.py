@@ -78,5 +78,10 @@ def desgracias():
     return render_template("desgracias.html", desgracias=desgracias, section="desgracias")
 
 
+@app.route("/reversos")
+def reversos():
+    return render_template("reversos.html", section="reversos")
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

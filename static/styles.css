@@ -505,6 +505,90 @@ body {
   print-color-adjust: exact;
 }
 
+/* ── Reverso controls ─────────────────────────────── */
+.reverso-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 2rem 1rem;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.control-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555555;
+}
+
+.tipo-btn {
+  padding: 0.42rem 1rem;
+  border-radius: 999px;
+  border: 2px solid #e2e2e2;
+  background: #e2e2e2;
+  color: #555555;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.tipo-btn--active {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+.cantidad-input {
+  width: 4rem;
+  padding: 0.42rem 0.6rem;
+  border: 2px solid #e2e2e2;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  text-align: center;
+  color: #111111;
+}
+
+/* ── Reverso cards ────────────────────────────────── */
+.fyd-reverso {
+  width: 9cm;
+  height: 5.8cm;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px rgba(17, 17, 17, 0.10);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.fyd-reverso--fortuna   { background: #e09c10; }
+.fyd-reverso--desgracia { background: #7A1A1A; }
+
+.fyd-reverso-inner {
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-radius: 0.5rem;
+  padding: 0.8rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fyd-reverso-label {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
 @media print {
   /* Allow browser to choose orientation (don't force portrait/landscape) */
   @page { size: auto; margin: 6mm; }
@@ -583,6 +667,22 @@ body {
     page-break-after: always;
     break-after: page;
   }
+
+  /* Reverso controls hidden in print */
+  .reverso-controls {
+    display: none !important;
+  }
+
+  .fyd-reverso {
+    flex: 0 0 9cm;
+    width: 9cm;
+    height: 5.8cm;
+    box-shadow: none;
+    break-inside: avoid;
+    outline: 1px dashed rgba(0, 0, 0, 0.28);
+    outline-offset: -4px;
+  }
+
   /* ── Fortunas y Desgracias — print ─────────────── */
   .section-nav,
   .btn-color {

@@ -60,9 +60,9 @@
   <script>
     let tipo = 'fortuna';
     let cantidad = 9;
+    const grid = document.getElementById('reverso-grid');
 
     function renderCards() {
-      const grid = document.getElementById('reverso-grid');
       grid.innerHTML = '';
       const label = tipo === 'fortuna' ? 'FORTUNA' : 'DESGRACIA';
       for (let i = 0; i < cantidad; i++) {

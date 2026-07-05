@@ -585,7 +585,7 @@ body {
 .fyd-grid.reverso-colores .fyd-reverso--desgracia { background: #7A1A1A; border-color: #7A1A1A; }
 
 .fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-label { color: #ffffff; }
-.fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-inner  { border-color: rgba(255, 255, 255, 0.4); }
+.fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-inner  { background: transparent; border-color: rgba(255, 255, 255, 0.4); }
 
 .fyd-reverso-inner {
   border: 3px solid rgba(255, 255, 255, 0.4);

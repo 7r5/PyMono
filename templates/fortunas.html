@@ -40,22 +40,43 @@
     <span class="nav-tab nav-tab--disabled">Tablero</span>
   </nav>
 
-  <main class="fyd-grid">
-    {% for card in cards %}
-      {% if loop.index0 % 3 == 0 %}<div class="fyd-print-row">{% endif %}
-      <article class="fyd-card fyd-card--{{ card.tipo }}">
-        <div class="fyd-bar">
-          <span class="fyd-tipo">{{ "FORTUNA" if card.tipo == "fortuna" else "DESGRACIA" }}</span>
-        </div>
-        <div class="fyd-body">
-          <p class="fyd-texto">{{ card.texto }}</p>
-          <div class="fyd-image">
-            <span class="fyd-image-label">IMG</span>
+  <main>
+    <!-- ── Fortunas ────────────────────────── -->
+    <div class="fyd-grid">
+      {% for card in fortunas %}
+        {% if loop.index0 % 3 == 0 %}<div class="fyd-print-row">{% endif %}
+        <article class="fyd-card fyd-card--{{ card.tipo }}">
+          <div class="fyd-bar">
+            <span class="fyd-tipo">FORTUNA</span>
           </div>
-        </div>
-      </article>
-      {% if loop.index0 % 3 == 2 or loop.last %}</div>{% endif %}
-    {% endfor %}
+          <div class="fyd-body">
+            <p class="fyd-texto">{{ card.texto }}</p>
+            <div class="fyd-image"><span class="fyd-image-label">IMG</span></div>
+          </div>
+        </article>
+        {% if loop.index0 % 3 == 2 or loop.last %}</div>{% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- page break between sections (only in print) -->
+    <div class="section-break"></div>
+
+    <!-- ── Desgracias ───────────────────────── -->
+    <div class="fyd-grid">
+      {% for card in desgracias %}
+        {% if loop.index0 % 3 == 0 %}<div class="fyd-print-row">{% endif %}
+        <article class="fyd-card fyd-card--{{ card.tipo }}">
+          <div class="fyd-bar">
+            <span class="fyd-tipo">DESGRACIA</span>
+          </div>
+          <div class="fyd-body">
+            <p class="fyd-texto">{{ card.texto }}</p>
+            <div class="fyd-image"><span class="fyd-image-label">IMG</span></div>
+          </div>
+        </article>
+        {% if loop.index0 % 3 == 2 or loop.last %}</div>{% endif %}
+      {% endfor %}
+    </div>
   </main>
 
   <script>

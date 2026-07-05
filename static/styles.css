@@ -578,7 +578,11 @@ body {
     outline: 1px dashed rgba(0, 0, 0, 0.28);
     outline-offset: -4px;
   }
-
+  /* Section break between fortunas and desgracias */
+  .section-break {
+    page-break-after: always;
+    break-after: page;
+  }
   /* ── Fortunas y Desgracias — print ─────────────── */
   .section-nav,
   .btn-color {

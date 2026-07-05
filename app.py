@@ -169,7 +169,6 @@ def _procesar_una_imagen(h, prompt_estilo, model, client):
             prompt=prompt,
             size="1024x1024",
             n=1,
-            response_format="b64_json",
         )
         
         # Check if cancelled after API response

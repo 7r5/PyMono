@@ -157,20 +157,34 @@
     });
 
     // ── Filter ───────────────────────────────────────────────────
+    function applyFilter(filterValue) {
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('tipo-btn--active'));
+      document.querySelector(`[data-filter="${filterValue}"]`)?.classList.add('tipo-btn--active');
+      document.querySelectorAll('.img-row').forEach(row => {
+        const estado = row.dataset.estado;
+        const hasImg = estado === 'completado';
+        if (filterValue === 'todas') row.style.display = '';
+        else if (filterValue === 'con') row.style.display = hasImg ? '' : 'none';
+        else row.style.display = hasImg ? 'none' : '';
+      });
+      document.getElementById('chk-todas').checked = false;
+      updateControls();
+    }
+    
+    function restoreFilter() {
+      const savedFilter = localStorage.getItem('selected_filter');
+      if (savedFilter) {
+        applyFilter(savedFilter);
+      } else {
+        applyFilter('todas');
+      }
+    }
+    
     document.querySelectorAll('[data-filter]').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('tipo-btn--active'));
-        btn.classList.add('tipo-btn--active');
         const f = btn.dataset.filter;
-        document.querySelectorAll('.img-row').forEach(row => {
-          const estado = row.dataset.estado;
-          const hasImg = estado === 'completado';
-          if (f === 'todas') row.style.display = '';
-          else if (f === 'con') row.style.display = hasImg ? '' : 'none';
-          else row.style.display = hasImg ? 'none' : '';
-        });
-        document.getElementById('chk-todas').checked = false;
-        updateControls();
+        localStorage.setItem('selected_filter', f);
+        applyFilter(f);
       });
     });
 
@@ -293,6 +307,9 @@
       }
     });
 
+    // Restore filter from localStorage on page load
+    restoreFilter();
+    
     // Start polling if any are already generating on page load
     const generando = [...document.querySelectorAll('.img-row[data-estado="generando"]')];
     if (generando.length) startPolling();

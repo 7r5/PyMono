@@ -42,14 +42,21 @@ body {
   font-size: 0.95rem;
 }
 
-.actions button {
+/* Print / primary action button */
+.actions button:not(.btn-color) {
   border: none;
   background: #111111;
   color: white;
   font-weight: 700;
-  padding: 0.85rem 1.2rem;
+  padding: 0.85rem 1.4rem;
   border-radius: 999px;
   cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: opacity 0.15s;
+}
+
+.actions button:not(.btn-color):hover {
+  opacity: 0.82;
 }
 
 .cards-grid {
@@ -365,22 +372,33 @@ body {
   pointer-events: none;
 }
 
-/* ── Fortunas y Desgracias — botón color ──────────── */
+/* ── Fortunas y Desgracias — botón toggle color ────── */
 .btn-color {
-  border: 2px solid #111111;
-  background: transparent;
-  color: #111111;
+  border: 2px solid #d4a800;
+  background: #fdf6e0;
+  color: #7a5c00;
   font-weight: 700;
-  padding: 0.85rem 1.2rem;
+  padding: 0.83rem 1.2rem;
   border-radius: 999px;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.03em;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
 }
 
 .btn-color:hover {
-  background: #111111;
+  background: #fbedb5;
+}
+
+.btn-color.is-active {
+  background: #e09c10;
+  border-color: #e09c10;
   color: #ffffff;
+}
+
+.btn-color.is-active:hover {
+  background: #c98a0a;
+  border-color: #c98a0a;
 }
 
 /* ── Fortunas y Desgracias — grid ─────────────────── */

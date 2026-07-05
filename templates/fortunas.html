@@ -60,15 +60,19 @@
     const btn = document.getElementById('btn-color');
     const grid = document.querySelector('.fyd-grid');
 
-    if (localStorage.getItem('fydColor') === '1') {
-      grid.classList.add('fyd-colores');
-      btn.textContent = 'Sin color de fondo';
+    function setColorMode(activo) {
+      grid.classList.toggle('fyd-colores', activo);
+      btn.classList.toggle('is-active', activo);
+      btn.textContent = activo ? '✦ Sin color de fondo' : '✦ Con color de fondo';
     }
 
+    // Restore saved preference
+    setColorMode(localStorage.getItem('fydColor') === '1');
+
     btn.addEventListener('click', () => {
-      const activo = grid.classList.toggle('fyd-colores');
+      const activo = !grid.classList.contains('fyd-colores');
       localStorage.setItem('fydColor', activo ? '1' : '0');
-      btn.textContent = activo ? 'Sin color de fondo' : 'Con color de fondo';
+      setColorMode(activo);
     });
   </script>
 </body>

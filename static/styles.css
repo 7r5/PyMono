@@ -69,6 +69,7 @@ body {
 .card-face {
   width: 7cm;
   height: 8cm;
+  max-height: 8cm;
   border-radius: 1rem;
   background: #ffffff;
   border: 1px solid rgba(17, 17, 17, 0.12);
@@ -80,18 +81,21 @@ body {
 }
 
 .card-bar {
-  min-height: 2.4cm;
+  height: 1.8cm;
   display: grid;
   place-items: center;
-  padding: 0;
+  padding: 0.65rem 0.6rem;
+  border-radius: 1rem 1rem 0 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .card-head {
   width: 100%;
-  padding: 0.55rem 0.65rem;
+  padding: 0;
   text-align: center;
   color: white;
-  background: inherit;
+  background: transparent;
 }
 
 .card-head h2 {
@@ -244,13 +248,19 @@ body {
 .separator {
   height: 1px;
   background: rgba(17, 17, 17, 0.08);
-  margin: 0.25rem 0;
+  margin: 0.12rem 0;
 }
 
 .mortgage-block {
   display: grid;
   gap: 0.35rem;
   padding-bottom: 0.75rem;
+}
+
+.construction-block {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.35rem 0.85rem 0.75rem;
 }
 
 .mortgage-row,
@@ -371,9 +381,15 @@ body {
   }
 
   .app-header,
+  .app-header *,
   .actions,
+  .actions *,
   .section-row {
-    display: none;
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .cards-grid {

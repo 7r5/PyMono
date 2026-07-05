@@ -29,6 +29,13 @@
     </div>
   </header>
 
+  <nav class="section-nav">
+    <a href="/" class="nav-tab nav-tab--active">Propiedades</a>
+    <a href="/fortunas" class="nav-tab">Fortunas y Desgracias</a>
+    <span class="nav-tab nav-tab--disabled">Billetes</span>
+    <span class="nav-tab nav-tab--disabled">Tablero</span>
+  </nav>
+
   <main class="cards-grid">
     {% for prop in properties %}
       {% if loop.index0 % 4 == 0 %}<div class="print-row">{% endif %}

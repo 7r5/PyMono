@@ -49,10 +49,28 @@ def read_properties(csv_path):
     return rows
 
 
+def read_cards(csv_path, tipo):
+    cards = []
+    with open(csv_path, newline="", encoding="utf-8-sig") as f:
+        lines = f.read().splitlines()
+        for line in lines[1:]:  # skip header row
+            line = line.strip()
+            if line:
+                cards.append({"tipo": tipo, "texto": line})
+    return cards
+
+
 @app.route("/")
 def index():
     properties = read_properties(CSV_FILE)
-    return render_template("index.html", properties=properties)
+    return render_template("index.html", properties=properties, section="propiedades")
+
+
+@app.route("/fortunas")
+def fortunas():
+    cards = read_cards(os.path.join(BASE_DIR, "fortunas.csv"), "fortuna")
+    cards += read_cards(os.path.join(BASE_DIR, "desgracias.csv"), "desgracia")
+    return render_template("fortunas.html", cards=cards, section="fortunas")
 
 
 if __name__ == "__main__":

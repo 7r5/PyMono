@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyMono - Fortunas y Desgracias</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    @media print {
+      .app-header, .app-header *,
+      .section-nav, .section-nav *,
+      .btn-color, .actions, .actions * {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>PyMono</h1>
+      <p>Fortunas y Desgracias — tarjetas horizontales 9×5.8 cm.</p>
+    </div>
+    <div class="actions">
+      <button id="btn-color" class="btn-color">Con color de fondo</button>
+      <button onclick="window.print()">Imprimir / Guardar PDF</button>
+    </div>
+  </header>
+
+  <nav class="section-nav">
+    <a href="/" class="nav-tab">Propiedades</a>
+    <a href="/fortunas" class="nav-tab nav-tab--active">Fortunas y Desgracias</a>
+    <span class="nav-tab nav-tab--disabled">Billetes</span>
+    <span class="nav-tab nav-tab--disabled">Tablero</span>
+  </nav>
+
+  <main class="fyd-grid">
+    {% for card in cards %}
+      {% if loop.index0 % 2 == 0 %}<div class="fyd-print-row">{% endif %}
+      <article class="fyd-card fyd-card--{{ card.tipo }}">
+        <div class="fyd-bar">
+          <span class="fyd-tipo">{{ "FORTUNA" if card.tipo == "fortuna" else "DESGRACIA" }}</span>
+        </div>
+        <div class="fyd-body">
+          <p class="fyd-texto">{{ card.texto }}</p>
+          <div class="fyd-image">
+            <span class="fyd-image-label">IMG</span>
+          </div>
+        </div>
+      </article>
+      {% if loop.index0 % 2 == 1 or loop.last %}</div>{% endif %}
+    {% endfor %}
+  </main>
+
+  <script>
+    const btn = document.getElementById('btn-color');
+    const grid = document.querySelector('.fyd-grid');
+
+    if (localStorage.getItem('fydColor') === '1') {
+      grid.classList.add('fyd-colores');
+      btn.textContent = 'Sin color de fondo';
+    }
+
+    btn.addEventListener('click', () => {
+      const activo = grid.classList.toggle('fyd-colores');
+      localStorage.setItem('fydColor', activo ? '1' : '0');
+      btn.textContent = activo ? 'Sin color de fondo' : 'Con color de fondo';
+    });
+  </script>
+</body>
+</html>

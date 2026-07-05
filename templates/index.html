@@ -21,7 +21,7 @@
     {% for prop in properties %}
       <article class="card">
         <section class="card-face card-front">
-          <div class="card-bar" style="background: {{ prop.display_color }};">
+          <div class="card-bar" style="--card-color: {{ prop.display_color }}; background-color: var(--card-color);">
             <div class="card-head">
               <h2>{{ prop.titulo }}</h2>
               {% if prop.ciudad %}
@@ -76,9 +76,7 @@
           <div class="separator"></div>
 
           <section class="construction-block">
-            <span class="mortgage-title">COSTOS DE CONSTRUCCIÓN</span>
-            <div class="construction-text">Casas cuestan ${{ prop.costo_casa }} cada una</div>
-            <div class="construction-text">Hotel cuesta ${{ prop.costo_hotel }} + 4 casas</div>
+            <div class="construction-text">Costo de casa ${{ prop.costo_casa }} · Costo de hotel ${{ prop.costo_hotel }}</div>
           </section>
         </section>
 

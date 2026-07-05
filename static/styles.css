@@ -68,29 +68,30 @@ body {
 
 .card-face {
   width: 7cm;
-  min-height: 8cm;
+  height: 8cm;
   border-radius: 1rem;
   background: #ffffff;
   border: 1px solid rgba(17, 17, 17, 0.12);
   box-shadow: 0 12px 22px rgba(17, 17, 17, 0.06);
   display: grid;
   grid-template-rows: auto 1fr;
-  overflow: visible;
+  overflow: hidden;
   color: #111111;
 }
 
 .card-bar {
-  height: 1.5cm;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 0.65rem;
+  min-height: 2.4cm;
+  display: grid;
+  place-items: center;
+  padding: 0;
 }
 
 .card-head {
-  padding: 0.4rem 0.4rem 0.35rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
   text-align: center;
   color: white;
+  background: inherit;
 }
 
 .card-head h2 {
@@ -349,51 +350,45 @@ body {
 }
 
 @media print {
+  html,
+  body,
+  .card-face,
+  .card-bar,
+  .back-head,
+  .back-pill,
+  .back-mortgage-block,
+  .construction-block,
+  .rent-block,
+  .table-block,
+  .back-content {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   body {
     background: #ffffff;
+    width: 100%;
   }
 
   .app-header,
-  .actions {
+  .actions,
+  .section-row {
     display: none;
   }
 
   .cards-grid {
-    padding: 0.8cm;
-    gap: 0.8cm;
-  }
-
-  .card {
-    page-break-inside: avoid;
-  }
-}
-
-
-@media print {
-  body {
-    background: white;
-  }
-  .app-header,
-  .actions,
-  .section-row,
-  .cards-grid {
-    box-shadow: none;
-  }
-  .cards-grid {
     padding: 0;
     gap: 0.5rem;
+    box-shadow: none;
   }
+
   .card,
   .card-front,
   .card-back {
     box-shadow: none;
-    border: none;
   }
-  .app-header,
-  .actions {
-    display: none;
-  }
-  html, body {
-    width: 100%;
+
+  .card {
+    page-break-inside: avoid;
   }
 }

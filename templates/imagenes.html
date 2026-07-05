@@ -130,6 +130,10 @@
         .map(c => c.dataset.hash);
     }
 
+    function currentFilter() {
+      return localStorage.getItem('selected_filter') || 'todas';
+    }
+
     function updateControls() {
       const n = selectedHashes().length;
       const btn = document.getElementById('btn-generar');
@@ -163,21 +167,24 @@
       document.querySelectorAll('.img-row').forEach(row => {
         const estado = row.dataset.estado;
         const hasImg = estado === 'completado';
+        let visible = true;
         if (filterValue === 'todas') row.style.display = '';
         else if (filterValue === 'con') row.style.display = hasImg ? '' : 'none';
         else row.style.display = hasImg ? 'none' : '';
+        visible = row.style.display !== 'none';
+        const errorRow = document.querySelector(`.img-error-row[data-hash="${row.dataset.hash}"]`);
+        if (errorRow && !visible) errorRow.style.display = 'none';
       });
       document.getElementById('chk-todas').checked = false;
       updateControls();
     }
+
+    function refreshVisibleList() {
+      applyFilter(currentFilter());
+    }
     
     function restoreFilter() {
-      const savedFilter = localStorage.getItem('selected_filter');
-      if (savedFilter) {
-        applyFilter(savedFilter);
-      } else {
-        applyFilter('todas');
-      }
+      refreshVisibleList();
     }
     
     document.querySelectorAll('[data-filter]').forEach(btn => {
@@ -232,9 +239,10 @@
       const data = await res.json();
       let anyGenerating = false;
       for (const [hash, entry] of Object.entries(data)) {
-        setRowEstado(hash, entry.estado, entry.imagen, entry.error);
+        setRowEstado(hash, entry.estado, entry.imagen, entry.error, {skipFilter: true});
         if (entry.estado === 'generando') anyGenerating = true;
       }
+      refreshVisibleList();
       updateCancelButton(anyGenerating);
       if (!anyGenerating) {
         clearInterval(pollTimer);
@@ -256,40 +264,63 @@
       }
     }
 
-    function setRowEstado(hash, estado, imagen, error) {
+    function setRowEstado(hash, estado, imagen, error, options = {}) {
       const row = document.querySelector(`.img-row[data-hash="${hash}"]`);
       if (!row) return;
+      const previousEstado = row.dataset.estado;
+      const previousImagen = row.dataset.imagen || '';
       row.dataset.estado = estado;
+      if (imagen) row.dataset.imagen = imagen;
       const tdImg = row.querySelector('.td-img');
       const btnGen = row.querySelector('.btn-gen-one');
+      const chk = row.querySelector('.row-check');
       const errorRow = document.querySelector(`.img-error-row[data-hash=\"${hash}\"]`);
       
       if (estado === 'generando') {
-        tdImg.innerHTML = '<span class=\"img-spinner\"></span>';
+        if (previousEstado !== 'generando') tdImg.innerHTML = '<span class=\"img-spinner\"></span>';
         if (btnGen) btnGen.disabled = true;
         if (errorRow) errorRow.style.display = 'none';
       } else if (estado === 'completado' && imagen) {
-        tdImg.innerHTML = `<img src=\"${imagen}\" class=\"img-thumb\" alt=\"imagen\">`;
+        const imgSrc = `${imagen}${imagen.includes('?') ? '&' : '?'}v=${Date.now()}`;
+        if (previousEstado !== 'completado' || previousImagen !== imagen) {
+          tdImg.innerHTML = `<img src=\"${imgSrc}\" class=\"img-thumb\" alt=\"imagen\">`;
+        }
         if (btnGen) { btnGen.disabled = false; btnGen.textContent = '↺ Regenerar'; }
+        if (chk) chk.checked = false;
         if (errorRow) errorRow.style.display = 'none';
       } else if (estado === 'error') {
-        const badge = document.createElement('span');
-        badge.className = 'img-error-badge';
-        badge.setAttribute('role', 'button');
-        badge.setAttribute('tabindex', '0');
-        badge.textContent = 'Error';
-        tdImg.innerHTML = '';
-        tdImg.appendChild(badge);
+        if (previousEstado !== 'error') {
+          const badge = document.createElement('span');
+          badge.className = 'img-error-badge';
+          badge.setAttribute('role', 'button');
+          badge.setAttribute('tabindex', '0');
+          badge.textContent = 'Error';
+          tdImg.innerHTML = '';
+          tdImg.appendChild(badge);
+        }
         if (btnGen) { btnGen.disabled = false; btnGen.textContent = 'Reintentar'; }
         if (errorRow) {
           errorRow.style.display = '';
           const errorMsg = errorRow.querySelector('.error-message');
           if (errorMsg) errorMsg.textContent = error || 'Error desconocido';
         }
+      } else {
+        if (imagen) {
+          const imgSrc = `${imagen}${imagen.includes('?') ? '&' : '?'}v=${Date.now()}`;
+          tdImg.innerHTML = `<img src=\"${imgSrc}\" class=\"img-thumb\" alt=\"imagen\">`;
+          if (btnGen) { btnGen.disabled = false; btnGen.textContent = '↺ Regenerar'; }
+        } else {
+          tdImg.innerHTML = '<span class=\"img-placeholder\">IMG</span>';
+          if (btnGen) { btnGen.disabled = false; btnGen.textContent = 'Generar'; }
+        }
+        if (errorRow) errorRow.style.display = 'none';
       }
+      if (!options.skipFilter) refreshVisibleList();
+      updateControls();
     }
     
-    // ── Error row toggle ─────────────────────────────────────    document.getElementById('btn-cancelar').addEventListener('click', cancelGeneration);
+    // ── Error row toggle ─────────────────────────────────────
+    document.getElementById('btn-cancelar').addEventListener('click', cancelGeneration);
     document.addEventListener('click', e => {
       if (e.target.classList.contains('img-error-badge')) {
         const row = e.target.closest('.img-row');

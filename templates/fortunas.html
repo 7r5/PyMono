@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/static/styles.css">
   <style>
     @media print {
-      /* Override global @page: 3mm margins so 3×9cm fits on landscape letter (26.74cm→27.34cm) */
+      /* Override global @page: 3mm margins so 3×8.5cm fits on landscape letter */
       @page { size: auto; margin: 3mm; }
       .app-header, .app-header *,
       .section-nav, .section-nav *,
@@ -43,19 +43,21 @@
     <span class="nav-tab nav-tab--disabled">Tablero</span>
   </nav>
 
-  <p class="section-description">Fortunas — tarjetas horizontales 9×5.8 cm.</p>
+  <p class="section-description">Fortunas — tarjetas horizontales 8.5×5.8 cm.</p>
 
   <main>
     <div class="fyd-grid">
       {% for card in fortunas %}
         {% if loop.index0 % 3 == 0 %}<div class="fyd-print-row">{% endif %}
-        <article class="fyd-card fyd-card--fortuna">
+        <article class="fyd-card fyd-card--fortuna{% if card.imagen %} fyd-card--with-image{% else %} fyd-card--no-image{% endif %}">
           <div class="fyd-bar"><span class="fyd-tipo">FORTUNA</span></div>
           <div class="fyd-body">
-            <p class="fyd-texto">{{ card.texto }}</p>
-            <div class="fyd-image">
+            <p class="fyd-texto" data-fyd-text>{{ card.texto }}</p>
+            <div class="fyd-image{% if card.imagen %} fyd-image--has-image{% endif %}">
             {% if card.imagen %}
-              <img src="{{ card.imagen }}" style="width:100%;height:100%;object-fit:cover;" alt="">
+              <button class="fyd-preview-btn" type="button" data-preview-src="{{ card.imagen }}" data-preview-text="{{ card.texto|e }}" aria-label="Ver imagen de fortuna en grande">
+                <img src="{{ card.imagen }}" alt="Imagen de la tarjeta de fortuna">
+              </button>
             {% else %}
               <span class="fyd-image-label">IMG</span>
             {% endif %}
@@ -67,9 +69,21 @@
     </div>
   </main>
 
+  <div class="fyd-modal" id="fyd-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vista previa de imagen">
+    <div class="fyd-modal__backdrop" data-close-preview></div>
+    <div class="fyd-modal__content">
+      <button class="fyd-modal__close" type="button" data-close-preview aria-label="Cerrar vista previa">×</button>
+      <img class="fyd-modal__img" id="fyd-modal-img" alt="Vista previa grande">
+      <p class="fyd-modal__caption" id="fyd-modal-caption"></p>
+    </div>
+  </div>
+
   <script>
     const btn = document.getElementById('btn-color');
     const grid = document.querySelector('.fyd-grid');
+    const modal = document.getElementById('fyd-modal');
+    const modalImg = document.getElementById('fyd-modal-img');
+    const modalCaption = document.getElementById('fyd-modal-caption');
 
     function setColorMode(activo) {
       grid.classList.toggle('fyd-colores', activo);
@@ -85,6 +99,62 @@
       localStorage.setItem('fydColor', activo ? '1' : '0');
       setColorMode(activo);
     });
+
+    function fitFydText() {
+      document.querySelectorAll('[data-fyd-text]').forEach(el => {
+        el.classList.remove('fyd-texto--compacto', 'fyd-texto--mini');
+        const length = el.textContent.trim().length;
+        const minSize = length > 220 ? 7.2 : length > 170 ? 8 : length > 120 ? 9 : 10;
+        const maxSize = 15.5;
+
+        let low = minSize;
+        let high = maxSize;
+        let best = minSize;
+
+        el.style.fontSize = `${minSize}px`;
+
+        for (let i = 0; i < 12; i++) {
+          const mid = (low + high) / 2;
+          el.style.fontSize = `${mid}px`;
+
+          if (el.scrollHeight <= el.clientHeight && el.scrollWidth <= el.clientWidth) {
+            best = mid;
+            low = mid;
+          } else {
+            high = mid;
+          }
+        }
+
+        el.style.fontSize = `${Math.max(minSize, best - 0.1).toFixed(2)}px`;
+      });
+    }
+
+    function openPreview(src, text) {
+      modalImg.src = src;
+      modalCaption.textContent = text || '';
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+
+    function closePreview() {
+      modal.setAttribute('aria-hidden', 'true');
+      modalImg.removeAttribute('src');
+      document.body.classList.remove('modal-open');
+    }
+
+    document.addEventListener('click', event => {
+      const previewBtn = event.target.closest('[data-preview-src]');
+      if (previewBtn) openPreview(previewBtn.dataset.previewSrc, previewBtn.dataset.previewText);
+      if (event.target.matches('[data-close-preview]')) closePreview();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closePreview();
+    });
+
+    window.addEventListener('load', fitFydText);
+    window.addEventListener('resize', fitFydText);
+    window.addEventListener('beforeprint', fitFydText);
   </script>
 </body>
 </html>

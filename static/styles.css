@@ -327,6 +327,7 @@ body {
 }
 
 @media print {
+  @page { size: letter; margin: 6mm; }
   html,
   body,
   .card-face,
@@ -361,8 +362,11 @@ body {
 
   .cards-grid {
     padding: 0;
-    gap: 0.5rem 1px; /* keep small vertical gap, 1px horizontal for printing */
+    gap: 0.4rem 1px; /* small vertical gap, 1px horizontal for printing */
     box-shadow: none;
+    justify-items: start; /* pack items from left to reduce extra gaps */
+    grid-template-columns: repeat(auto-fill, 7cm); /* ensure fixed 7cm columns when printing */
+    grid-auto-rows: auto;
   }
 
   .card,
@@ -373,5 +377,6 @@ body {
 
   .card {
     page-break-inside: avoid;
+    margin: 0;
   }
 }

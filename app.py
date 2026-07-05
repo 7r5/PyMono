@@ -69,8 +69,13 @@ def index():
 @app.route("/fortunas")
 def fortunas():
     fortunas = read_cards(os.path.join(BASE_DIR, "fortunas.csv"), "fortuna")
+    return render_template("fortunas.html", fortunas=fortunas, section="fortunas")
+
+
+@app.route("/desgracias")
+def desgracias():
     desgracias = read_cards(os.path.join(BASE_DIR, "desgracias.csv"), "desgracia")
-    return render_template("fortunas.html", fortunas=fortunas, desgracias=desgracias, section="fortunas")
+    return render_template("desgracias.html", desgracias=desgracias, section="desgracias")
 
 
 if __name__ == "__main__":

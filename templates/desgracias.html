@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PyMono - Fortunas</title>
+  <title>PyMono - Desgracias</title>
   <link rel="stylesheet" href="/static/styles.css">
   <style>
     @media print {
-      /* Override global @page: 3mm margins so 3×9cm fits on landscape letter (26.74cm→27.34cm) */
+      /* Override global @page: 3mm margins so 3×9cm fits on landscape letter */
       @page { size: auto; margin: 3mm; }
       .app-header, .app-header *,
       .section-nav, .section-nav *,
@@ -25,28 +25,28 @@
   <header class="app-header">
     <div>
       <h1>PyMono</h1>
-      <p>Fortunas — tarjetas horizontales 9×5.8 cm.</p>
+      <p>Desgracias — tarjetas horizontales 9×5.8 cm.</p>
     </div>
     <div class="actions">
-      <button id="btn-color" class="btn-color">Con color de fondo</button>
+      <button id="btn-color" class="btn-color">✦ Con color de fondo</button>
       <button onclick="window.print()">Imprimir / Guardar PDF</button>
     </div>
   </header>
 
   <nav class="section-nav">
     <a href="/" class="nav-tab">Propiedades</a>
-    <a href="/fortunas" class="nav-tab nav-tab--active">Fortunas</a>
-    <a href="/desgracias" class="nav-tab">Desgracias</a>
+    <a href="/fortunas" class="nav-tab">Fortunas</a>
+    <a href="/desgracias" class="nav-tab nav-tab--active">Desgracias</a>
     <span class="nav-tab nav-tab--disabled">Billetes</span>
     <span class="nav-tab nav-tab--disabled">Tablero</span>
   </nav>
 
   <main>
     <div class="fyd-grid">
-      {% for card in fortunas %}
+      {% for card in desgracias %}
         {% if loop.index0 % 3 == 0 %}<div class="fyd-print-row">{% endif %}
-        <article class="fyd-card fyd-card--fortuna">
-          <div class="fyd-bar"><span class="fyd-tipo">FORTUNA</span></div>
+        <article class="fyd-card fyd-card--desgracia">
+          <div class="fyd-bar"><span class="fyd-tipo">DESGRACIA</span></div>
           <div class="fyd-body">
             <p class="fyd-texto">{{ card.texto }}</p>
             <div class="fyd-image"><span class="fyd-image-label">IMG</span></div>
@@ -67,12 +67,11 @@
       btn.textContent = activo ? '✦ Sin color de fondo' : '✦ Con color de fondo';
     }
 
-    // Restore saved preference
-    setColorMode(localStorage.getItem('fydColor') === '1');
+    setColorMode(localStorage.getItem('fydColorDesgracias') === '1');
 
     btn.addEventListener('click', () => {
       const activo = !grid.classList.contains('fyd-colores');
-      localStorage.setItem('fydColor', activo ? '1' : '0');
+      localStorage.setItem('fydColorDesgracias', activo ? '1' : '0');
       setColorMode(activo);
     });
   </script>

@@ -327,7 +327,8 @@ body {
 }
 
 @media print {
-  @page { size: letter; margin: 6mm; }
+  /* Allow browser to choose orientation (don't force portrait/landscape) */
+  @page { size: auto; margin: 6mm; }
   html,
   body,
   .card-face,

@@ -3,6 +3,8 @@ import hashlib
 import json
 import os
 import threading
+import base64
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -139,13 +141,97 @@ def todas_las_cartas():
     return cards
 
 
-def _generar_en_background(hashes, prompt_estilo, model="dall-e-2"):
-    """Background thread: calls OpenAI DALL-E and removes white backgrounds for transparency."""
+def _procesar_una_imagen(h, prompt_estilo, model, client):
+    """Procesa la generación de una imagen individual."""
+    global _cancel_generation
+    
+    # Check if generation was cancelled
+    if _cancel_generation:
+        data = leer_imagenes()
+        if h in data and data[h]["estado"] == "generando":
+            data[h]["estado"] = "pendiente"
+        guardar_imagenes(data)
+        return
+    
+    from PIL import Image
+    from io import BytesIO
+    
+    try:
+        data = leer_imagenes()
+        if h not in data:
+            return
+        
+        texto = data[h]["texto"]
+        tipo = data[h]["tipo"]
+        prompt = f"{prompt_estilo}\n\nContexto de la tarjeta ({tipo}): {texto}"
+        
+        response = client.images.generate(
+            model=model,
+            prompt=prompt,
+            size="1024x1024",
+            n=1,
+            response_format="b64_json",
+        )
+        
+        # Validate response structure
+        if not response or not response.data or len(response.data) == 0:
+            raise Exception(f"OpenAI returned empty response for model '{model}'")
+        
+        # Get image data from base64 response
+        image_b64 = response.data[0].b64_json
+        if not image_b64:
+            raise Exception("OpenAI did not return image data.")
+        
+        # Decode base64 to image bytes
+        try:
+            img_data = base64.b64decode(image_b64)
+            if not img_data:
+                raise Exception("Failed to decode base64 image data from OpenAI")
+        except Exception as e:
+            raise Exception(f"Base64 decode error: {str(e)}")
+        
+        # Convert white background to transparent
+        img = Image.open(BytesIO(img_data))
+        
+        # Convert to RGBA if not already
+        img = img.convert("RGBA")
+        data_arr = img.getdata()
+        new_data = []
+        
+        # Replace near-white pixels with transparent
+        for item in data_arr:
+            # If pixel is near white (R,G,B > 240), make it transparent
+            if item[0] > 240 and item[1] > 240 and item[2] > 240:
+                new_data.append((255, 255, 255, 0))  # transparent
+            else:
+                new_data.append(item)
+        
+        img.putdata(new_data)
+        
+        # Save as PNG with transparency
+        filename = f"{tipo}_{h}.png"
+        filepath = os.path.join(IMAGES_DIR, filename)
+        img.save(filepath, "PNG")
+        
+        data = leer_imagenes()
+        data[h]["imagen"] = f"/static/images/{filename}"
+        data[h]["estado"] = "completado"
+        data[h]["prompt_usado"] = prompt
+        guardar_imagenes(data)
+        
+    except Exception as e:
+        data = leer_imagenes()
+        if h in data:
+            data[h]["estado"] = "error"
+            data[h]["error"] = str(e)
+        guardar_imagenes(data)
+
+
+def _generar_en_background(hashes, prompt_estilo, model="gpt-image-2"):
+    """Background thread: calls OpenAI API in parallel and removes white backgrounds for transparency."""
     global _cancel_generation
     try:
         from openai import OpenAI
-        from PIL import Image
-        from io import BytesIO
         client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     except Exception as e:
         data = leer_imagenes()
@@ -155,87 +241,13 @@ def _generar_en_background(hashes, prompt_estilo, model="dall-e-2"):
                 data[h]["error"] = str(e)
         guardar_imagenes(data)
         return
-
-    for h in hashes:
-        # Check if generation was cancelled
-        if _cancel_generation:
-            data = leer_imagenes()
-            if h in data and data[h]["estado"] == "generando":
-                data[h]["estado"] = "pendiente"
-            guardar_imagenes(data)
-            continue
-        
-        data = leer_imagenes()
-        if h not in data:
-            continue
-        texto = data[h]["texto"]
-        tipo = data[h]["tipo"]
-        prompt = f"{prompt_estilo}\n\nContexto de la tarjeta ({tipo}): {texto}"
-        try:
-            response = client.images.generate(
-                model=model,
-                prompt=prompt,
-                size="1024x1024",
-                n=1,
-            )
-            
-            # Validate response structure
-            if not response or not response.data or len(response.data) == 0:
-                raise Exception(f"OpenAI returned empty response for model '{model}'")
-            
-            url = response.data[0].url
-            if not url or url == "None":
-                raise Exception(f"OpenAI returned invalid/null URL. Check if model '{model}' exists and API quota is available")
-            
-            # Download image with automatic retries
-            session = requests.Session()
-            retry_strategy = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
-            adapter = HTTPAdapter(max_retries=retry_strategy)
-            session.mount("https://", adapter)
-            
-            try:
-                response_img = session.get(url, timeout=60)
-                response_img.raise_for_status()
-                img_data = response_img.content
-                if not img_data:
-                    raise Exception("Downloaded empty image data from OpenAI URL")
-            except requests.exceptions.RequestException as e:
-                raise Exception(f"Failed to download image from OpenAI after retries: {str(e)}")
-            
-            # Convert white background to transparent
-            img = Image.open(BytesIO(img_data))
-            
-            # Convert to RGBA if not already
-            img = img.convert("RGBA")
-            data_arr = img.getdata()
-            new_data = []
-            
-            # Replace near-white pixels with transparent
-            for item in data_arr:
-                # If pixel is near white (R,G,B > 240), make it transparent
-                if item[0] > 240 and item[1] > 240 and item[2] > 240:
-                    new_data.append((255, 255, 255, 0))  # transparent
-                else:
-                    new_data.append(item)
-            
-            img.putdata(new_data)
-            
-            # Save as PNG with transparency
-            filename = f"{tipo}_{h}.png"
-            filepath = os.path.join(IMAGES_DIR, filename)
-            img.save(filepath, "PNG")
-            
-            data = leer_imagenes()
-            data[h]["imagen"] = f"/static/images/{filename}"
-            data[h]["estado"] = "completado"
-            data[h]["prompt_usado"] = prompt
-            guardar_imagenes(data)
-        except Exception as e:
-            data = leer_imagenes()
-            if h in data:
-                data[h]["estado"] = "error"
-                data[h]["error"] = str(e)
-            guardar_imagenes(data)
+    
+    # Process images in parallel using ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(_procesar_una_imagen, h, prompt_estilo, model, client) for h in hashes]
+        # Wait for all tasks to complete
+        for future in futures:
+            future.result()
 
 
 # ── Imagenes routes ───────────────────────────────────────────────────────────
@@ -280,7 +292,7 @@ def api_generar():
     body = request.get_json()
     hashes = body.get("hashes", [])
     prompt_estilo = body.get("prompt_estilo", "")
-    model = body.get("model", "dall-e-2")
+    model = body.get("model", "gpt-image-2")
 
     if not hashes:
         return jsonify({"error": "No hashes provided"}), 400

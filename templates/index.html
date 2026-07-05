@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PyMono - Tarjetas Monopoly Premium</title>
   <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    @media print {
+      .app-header,
+      .app-header * {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="app-header">

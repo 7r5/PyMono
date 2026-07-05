@@ -347,6 +347,12 @@ body {
   padding: 0.75rem 2rem 1rem;
 }
 
+.section-description {
+  margin: -0.3rem 2rem 1rem;
+  color: #666666;
+  font-size: 0.92rem;
+}
+
 .nav-tab {
   padding: 0.45rem 1.1rem;
   border-radius: 999px;
@@ -553,6 +559,13 @@ body {
   font-family: inherit;
   text-align: center;
   color: #111111;
+}
+
+.pages-info {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #888888;
+  letter-spacing: 0.02em;
 }
 
 /* ── Reverso cards ────────────────────────────────── */
@@ -766,6 +779,7 @@ body {
 
   /* ── Fortunas y Desgracias — print ─────────────── */
   .section-nav,
+  .section-description,
   .btn-color {
     display: none !important;
   }

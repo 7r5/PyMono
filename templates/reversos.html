@@ -26,7 +26,7 @@
   <header class="app-header">
     <div>
       <h1>PyMono</h1>
-      <p>Reversos de Fortunas y Desgracias — 9×5.8 cm.</p>
+      <p>Esta es una app que te ayuda a generar las paginas imprimibles de las tarjetas necesarias para crear tu propio monopoly.</p>
     </div>
     <div class="actions">
       <button id="btn-color-reverso" class="btn-color">✦ Con color de fondo</button>
@@ -43,6 +43,8 @@
     <span class="nav-tab nav-tab--disabled">Tablero</span>
   </nav>
 
+  <p class="section-description">Reversos de Fortunas y Desgracias — 9×5.8 cm.</p>
+
   <div class="reverso-controls">
     <div class="control-group">
       <span class="control-label">Tipo:</span>
@@ -53,6 +55,7 @@
       <label class="control-label" for="cantidad">Cantidad:</label>
       <input type="number" id="cantidad" value="9" min="1" max="99" class="cantidad-input">
     </div>
+    <span class="pages-info" id="pages-info"></span>
   </div>
 
   <main class="fyd-grid" id="reverso-grid"></main>
@@ -93,7 +96,14 @@
       renderCards();
     });
 
+    function updatePages() {
+      const pages = Math.ceil(cantidad / 9); // 3 cols × 3 rows per landscape page
+      document.getElementById('pages-info').textContent =
+        `\u2192 ${pages} p\u00e1gina${pages !== 1 ? 's' : ''} a imprimir`;
+    }
+
     renderCards();
+    updatePages();
 
     // Color toggle
     const btnColor = document.getElementById('btn-color-reverso');
@@ -108,6 +118,7 @@
       localStorage.setItem('reversoColor', activo ? '1' : '0');
       setColorMode(activo);
     });
-  </script>
+    // Update pages count on quantity change
+    document.getElementById('cantidad').addEventListener('input', updatePages);  </script>
 </body>
 </html>

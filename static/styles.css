@@ -442,11 +442,11 @@ body {
   print-color-adjust: exact;
 }
 
-.fyd-card--fortuna .fyd-bar  { background: #e09c10; }
-.fyd-card--desgracia .fyd-bar { background: #7A1A1A; }
+.fyd-card--fortuna .fyd-bar  { background: transparent; }
+.fyd-card--desgracia .fyd-bar { background: transparent; }
 
 .fyd-tipo {
-  color: #ffffff;
+  color: #111111;
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.14em;

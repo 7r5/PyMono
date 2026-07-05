@@ -6,6 +6,7 @@ __pycache__/
 *.pyd
 .DS_Store
 .env
+.vscode
 static/images/*.png
 static/images/*.jpg
 static/images/*.webp

@@ -1,2 +1,4 @@
 Flask>=2.3
 reportlab
+openai>=1.0
+python-dotenv

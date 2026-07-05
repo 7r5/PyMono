@@ -5,3 +5,8 @@ __pycache__/
 *.pyo
 *.pyd
 .DS_Store
+.env
+static/images/*.png
+static/images/*.jpg
+static/images/*.webp
+data/imagenes.json

@@ -39,6 +39,7 @@
     <a href="/desgracias" class="nav-tab">Desgracias</a>
     <a href="/reversos" class="nav-tab">Reversos</a>
     <a href="/billetes" class="nav-tab">Billetes</a>
+    <a href="/imagenes" class="nav-tab">Imágenes</a>
     <span class="nav-tab nav-tab--disabled">Tablero</span>
   </nav>
 
@@ -52,7 +53,13 @@
           <div class="fyd-bar"><span class="fyd-tipo">FORTUNA</span></div>
           <div class="fyd-body">
             <p class="fyd-texto">{{ card.texto }}</p>
-            <div class="fyd-image"><span class="fyd-image-label">IMG</span></div>
+            <div class="fyd-image">
+            {% if card.imagen %}
+              <img src="{{ card.imagen }}" style="width:100%;height:100%;object-fit:cover;" alt="">
+            {% else %}
+              <span class="fyd-image-label">IMG</span>
+            {% endif %}
+          </div>
           </div>
         </article>
         {% if loop.index0 % 3 == 2 or loop.last %}</div>{% endif %}

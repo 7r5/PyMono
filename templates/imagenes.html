@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyMono - Imágenes IA</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>PyMono</h1>
+      <p>Gestión de imágenes IA — DALL-E 3 vía OpenAI.</p>
+    </div>
+    <div class="actions">
+      <button id="btn-generar" class="btn-generar" disabled>Generar seleccionadas</button>
+    </div>
+  </header>
+
+  <nav class="section-nav">
+    <a href="/" class="nav-tab">Propiedades</a>
+    <a href="/fortunas" class="nav-tab">Fortunas</a>
+    <a href="/desgracias" class="nav-tab">Desgracias</a>
+    <a href="/reversos" class="nav-tab">Reversos</a>
+    <a href="/billetes" class="nav-tab">Billetes</a>
+    <a href="/imagenes" class="nav-tab nav-tab--active">Imágenes</a>
+    <span class="nav-tab nav-tab--disabled">Tablero</span>
+  </nav>
+
+  <!-- Controls -->
+  <div class="img-toolbar">
+    <div class="control-group">
+      <span class="control-label">Filtro:</span>
+      <button class="tipo-btn tipo-btn--active" data-filter="todas">Todas</button>
+      <button class="tipo-btn" data-filter="con">Con imagen</button>
+      <button class="tipo-btn" data-filter="sin">Sin imagen</button>
+    </div>
+    <div class="control-group">
+      <label class="control-label">
+        <input type="checkbox" id="chk-todas"> Seleccionar visibles
+      </label>
+    </div>
+    <div class="img-cost-badge" id="cost-badge" style="display:none">
+      <span id="cost-text"></span>
+    </div>
+  </div>
+
+  <!-- Prompt editor -->
+  <div class="img-prompt-row">
+    <label class="control-label" for="prompt-estilo">Prompt de estilo (aplica a todas):</label>
+    <textarea id="prompt-estilo" class="prompt-textarea" rows="2">{{ prompt_estilo }}</textarea>
+  </div>
+
+  <!-- Table -->
+  <div class="img-table-wrap">
+    <table class="img-table">
+      <thead>
+        <tr>
+          <th style="width:2.5rem"></th>
+          <th style="width:7rem">Tipo</th>
+          <th>Texto</th>
+          <th style="width:10rem">Imagen</th>
+          <th style="width:6rem"></th>
+        </tr>
+      </thead>
+      <tbody id="img-tbody">
+        {% for card in cards %}
+        <tr class="img-row" data-hash="{{ card.hash }}" data-estado="{{ card.estado }}"
+            data-tipo="{{ card.tipo }}">
+          <td class="td-check">
+            <input type="checkbox" class="row-check" data-hash="{{ card.hash }}">
+          </td>
+          <td>
+            <span class="tipo-badge tipo-badge--{{ card.tipo }}">
+              {{ "FORTUNA" if card.tipo == "fortuna" else "DESGRACIA" }}
+            </span>
+          </td>
+          <td class="td-texto">{{ card.texto }}</td>
+          <td class="td-img">
+            {% if card.imagen %}
+              <img src="{{ card.imagen }}" class="img-thumb" alt="imagen">
+            {% elif card.estado == "generando" %}
+              <span class="img-spinner"></span>
+            {% elif card.estado == "error" %}
+              <span class="img-error-badge" title="{{ card.error }}">Error</span>
+            {% else %}
+              <span class="img-placeholder">IMG</span>
+            {% endif %}
+          </td>
+          <td class="td-action">
+            <button class="btn-gen-one" data-hash="{{ card.hash }}"
+              {% if card.estado == "generando" %}disabled{% endif %}>
+              {{ "↺ Regenerar" if card.imagen else "Generar" }}
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const PRICE_PER_IMAGE = 0.04; // DALL-E 3 standard
+
+    // ── Selection ────────────────────────────────────────────────
+    function visibleRows() {
+      return [...document.querySelectorAll('.img-row:not([style*="none"])')];
+    }
+
+    function selectedHashes() {
+      return [...document.querySelectorAll('.row-check:checked')]
+        .map(c => c.dataset.hash);
+    }
+
+    function updateControls() {
+      const n = selectedHashes().length;
+      const btn = document.getElementById('btn-generar');
+      const badge = document.getElementById('cost-badge');
+      const costText = document.getElementById('cost-text');
+      btn.disabled = n === 0;
+      if (n > 0) {
+        badge.style.display = '';
+        costText.textContent = `${n} tarjeta${n !== 1 ? 's' : ''} · ~$${(n * PRICE_PER_IMAGE).toFixed(2)} USD`;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    document.getElementById('chk-todas').addEventListener('change', e => {
+      visibleRows().forEach(row => {
+        const chk = row.querySelector('.row-check');
+        if (chk) chk.checked = e.target.checked;
+      });
+      updateControls();
+    });
+
+    document.addEventListener('change', e => {
+      if (e.target.classList.contains('row-check')) updateControls();
+    });
+
+    // ── Filter ───────────────────────────────────────────────────
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('tipo-btn--active'));
+        btn.classList.add('tipo-btn--active');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('.img-row').forEach(row => {
+          const estado = row.dataset.estado;
+          const hasImg = estado === 'completado';
+          if (f === 'todas') row.style.display = '';
+          else if (f === 'con') row.style.display = hasImg ? '' : 'none';
+          else row.style.display = hasImg ? 'none' : '';
+        });
+        document.getElementById('chk-todas').checked = false;
+        updateControls();
+      });
+    });
+
+    // ── Generate ─────────────────────────────────────────────────
+    async function generar(hashes) {
+      if (!hashes.length) return;
+      const prompt = document.getElementById('prompt-estilo').value.trim();
+
+      // Show spinners immediately
+      hashes.forEach(h => setRowEstado(h, 'generando'));
+
+      const res = await fetch('/api/generar', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({hashes, prompt_estilo: prompt}),
+      });
+      if (!res.ok) {
+        hashes.forEach(h => setRowEstado(h, 'error'));
+        return;
+      }
+      startPolling();
+    }
+
+    document.getElementById('btn-generar').addEventListener('click', () => {
+      generar(selectedHashes());
+    });
+
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('btn-gen-one')) {
+        generar([e.target.dataset.hash]);
+      }
+    });
+
+    // ── Polling ──────────────────────────────────────────────────
+    let pollTimer = null;
+
+    function startPolling() {
+      if (pollTimer) return;
+      pollTimer = setInterval(pollEstado, 2000);
+    }
+
+    async function pollEstado() {
+      const res = await fetch('/api/imagenes/estado');
+      const data = await res.json();
+      let anyGenerating = false;
+      for (const [hash, entry] of Object.entries(data)) {
+        setRowEstado(hash, entry.estado, entry.imagen, entry.error);
+        if (entry.estado === 'generando') anyGenerating = true;
+      }
+      if (!anyGenerating) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+      }
+    }
+
+    function setRowEstado(hash, estado, imagen, error) {
+      const row = document.querySelector(`.img-row[data-hash="${hash}"]`);
+      if (!row) return;
+      row.dataset.estado = estado;
+      const tdImg = row.querySelector('.td-img');
+      const btnGen = row.querySelector('.btn-gen-one');
+      if (estado === 'generando') {
+        tdImg.innerHTML = '<span class="img-spinner"></span>';
+        if (btnGen) btnGen.disabled = true;
+      } else if (estado === 'completado' && imagen) {
+        tdImg.innerHTML = `<img src="${imagen}" class="img-thumb" alt="imagen">`;
+        if (btnGen) { btnGen.disabled = false; btnGen.textContent = '↺ Regenerar'; }
+      } else if (estado === 'error') {
+        tdImg.innerHTML = `<span class="img-error-badge" title="${error || ''}">Error</span>`;
+        if (btnGen) { btnGen.disabled = false; btnGen.textContent = 'Reintentar'; }
+      }
+    }
+
+    // Start polling if any are already generating on page load
+    const generando = [...document.querySelectorAll('.img-row[data-estado="generando"]')];
+    if (generando.length) startPolling();
+  </script>
+</body>
+</html>

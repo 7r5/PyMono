@@ -568,7 +568,182 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* ── Reverso cards ────────────────────────────────── */
+/* ── Imágenes IA — tabla de gestión ──────────────── */
+.img-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 2rem 0.25rem;
+  flex-wrap: wrap;
+}
+
+.img-cost-badge {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+}
+
+.img-prompt-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 2rem 0.75rem;
+}
+
+.prompt-textarea {
+  flex: 1;
+  max-width: 60rem;
+  border: 2px solid #e2e2e2;
+  border-radius: 0.5rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 0.45rem 0.65rem;
+  color: #111111;
+  resize: vertical;
+}
+
+.img-table-wrap {
+  padding: 0 2rem 2rem;
+  overflow-x: auto;
+}
+
+.img-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.img-table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 2px solid rgba(17,17,17,0.1);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555555;
+}
+
+.img-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(17,17,17,0.07);
+  vertical-align: middle;
+}
+
+.img-row:hover {
+  background: #f9f9f9;
+}
+
+.td-texto {
+  max-width: 30rem;
+  line-height: 1.4;
+  color: #111111;
+}
+
+.tipo-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.tipo-badge--fortuna   { background: #fff8e1; color: #7a5c00; border: 1px solid #f4c030; }
+.tipo-badge--desgracia { background: #fdecea; color: #7A1A1A; border: 1px solid #e57373; }
+
+.td-img {
+  text-align: center;
+}
+
+.img-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(17,17,17,0.1);
+}
+
+.img-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: #eeeeee;
+  border: 2px dashed rgba(17,17,17,0.2);
+  border-radius: 0.4rem;
+  color: #bbbbbb;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.img-error-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background: #fdecea;
+  color: #c62828;
+  border-radius: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: help;
+}
+
+/* Spinner */
+.img-spinner {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(17,17,17,0.15);
+  border-top-color: #111111;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Generate button */
+.btn-generar {
+  border: none;
+  background: #111111;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.btn-generar:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.btn-gen-one {
+  border: 1px solid #d0d0d0;
+  background: #ffffff;
+  color: #111111;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btn-gen-one:hover   { background: #f0f0f0; }
+.btn-gen-one:disabled { opacity: 0.4; cursor: not-allowed; }
 .fyd-reverso {
   width: 9cm;
   height: 5.8cm;

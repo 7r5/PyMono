@@ -20,7 +20,7 @@ CSV_FILE = os.path.join(BASE_DIR, "data", "props.csv")
 IMAGENES_JSON = os.path.join(BASE_DIR, "data", "imagenes.json")
 IMAGES_DIR = os.path.join(BASE_DIR, "static", "images")
 _lock = threading.Lock()
-_cancel_generation = False
+_generation_state = {"cancel": False}  # State dictionary for cancellation flag
 
 COLOR_MAP = {
     "cafe": "#8b5a2b",
@@ -143,18 +143,13 @@ def todas_las_cartas():
 
 def _procesar_una_imagen(h, prompt_estilo, model, client):
     """Procesa la generación de una imagen individual."""
-    global _cancel_generation
-    
-    # Check if generation was cancelled
-    if _cancel_generation:
-        data = leer_imagenes()
-        if h in data and data[h]["estado"] == "generando":
-            data[h]["estado"] = "pendiente"
-        guardar_imagenes(data)
-        return
     
     from PIL import Image
     from io import BytesIO
+    
+    # Early exit if cancelled before starting
+    if _generation_state["cancel"]:
+        return
     
     try:
         data = leer_imagenes()
@@ -165,6 +160,10 @@ def _procesar_una_imagen(h, prompt_estilo, model, client):
         tipo = data[h]["tipo"]
         prompt = f"{prompt_estilo}\n\nContexto de la tarjeta ({tipo}): {texto}"
         
+        # Check again before making API call
+        if _generation_state["cancel"]:
+            return
+        
         response = client.images.generate(
             model=model,
             prompt=prompt,
@@ -172,6 +171,10 @@ def _procesar_una_imagen(h, prompt_estilo, model, client):
             n=1,
             response_format="b64_json",
         )
+        
+        # Check if cancelled after API response
+        if _generation_state["cancel"]:
+            return
         
         # Validate response structure
         if not response or not response.data or len(response.data) == 0:
@@ -189,6 +192,10 @@ def _procesar_una_imagen(h, prompt_estilo, model, client):
                 raise Exception("Failed to decode base64 image data from OpenAI")
         except Exception as e:
             raise Exception(f"Base64 decode error: {str(e)}")
+        
+        # Check if cancelled before processing image
+        if _generation_state["cancel"]:
+            return
         
         # Convert white background to transparent
         img = Image.open(BytesIO(img_data))
@@ -208,6 +215,10 @@ def _procesar_una_imagen(h, prompt_estilo, model, client):
         
         img.putdata(new_data)
         
+        # Check if cancelled before saving
+        if _generation_state["cancel"]:
+            return
+        
         # Save as PNG with transparency
         filename = f"{tipo}_{h}.png"
         filepath = os.path.join(IMAGES_DIR, filename)
@@ -220,16 +231,17 @@ def _procesar_una_imagen(h, prompt_estilo, model, client):
         guardar_imagenes(data)
         
     except Exception as e:
-        data = leer_imagenes()
-        if h in data:
-            data[h]["estado"] = "error"
-            data[h]["error"] = str(e)
-        guardar_imagenes(data)
+        # Don't save error if generation was cancelled
+        if not _generation_state["cancel"]:
+            data = leer_imagenes()
+            if h in data:
+                data[h]["estado"] = "error"
+                data[h]["error"] = str(e)
+            guardar_imagenes(data)
 
 
 def _generar_en_background(hashes, prompt_estilo, model="gpt-image-2"):
     """Background thread: calls OpenAI API in parallel and removes white backgrounds for transparency."""
-    global _cancel_generation
     try:
         from openai import OpenAI
         client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -243,11 +255,26 @@ def _generar_en_background(hashes, prompt_estilo, model="gpt-image-2"):
         return
     
     # Process images in parallel using ThreadPoolExecutor
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        futures = [executor.submit(_procesar_una_imagen, h, prompt_estilo, model, client) for h in hashes]
-        # Wait for all tasks to complete
-        for future in futures:
-            future.result()
+    try:
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = {executor.submit(_procesar_una_imagen, h, prompt_estilo, model, client): h for h in hashes}
+            # Wait for all tasks to complete
+            for future in futures:
+                try:
+                    future.result()
+                except Exception:
+                    pass  # Errors are handled inside _procesar_una_imagen
+    finally:
+        # After generation completes (or is cancelled), mark any pending/generating items as pending
+        if _generation_state["cancel"]:
+            data = leer_imagenes()
+            for h in hashes:
+                if h in data and data[h]["estado"] == "generando":
+                    data[h]["estado"] = "pendiente"
+            guardar_imagenes(data)
+        
+        # Reset cancel flag
+        _generation_state["cancel"] = False
 
 
 # ── Imagenes routes ───────────────────────────────────────────────────────────
@@ -286,9 +313,6 @@ def api_imagenes_estado():
 
 @app.route("/api/generar", methods=["POST"])
 def api_generar():
-    global _cancel_generation
-    _cancel_generation = False  # Reset cancel flag when new generation starts
-    
     body = request.get_json()
     hashes = body.get("hashes", [])
     prompt_estilo = body.get("prompt_estilo", "")
@@ -297,6 +321,9 @@ def api_generar():
     if not hashes:
         return jsonify({"error": "No hashes provided"}), 400
 
+    # Reset cancel flag when new generation starts
+    _generation_state["cancel"] = False
+    
     # Save prompt_estilo in config
     data = leer_imagenes()
     data.setdefault("_config", {})["prompt_estilo"] = prompt_estilo
@@ -323,8 +350,7 @@ def api_generar():
 @app.route("/api/cancelar", methods=["POST"])
 def api_cancelar():
     """Cancel all pending image generation."""
-    global _cancel_generation
-    _cancel_generation = True
+    _generation_state["cancel"] = True
     return jsonify({"ok": True, "mensaje": "Cancelación solicitada"}), 200
 
 

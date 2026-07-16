@@ -65,14 +65,35 @@ def read_properties(csv_path):
     return rows
 
 
-def read_cards(csv_path, tipo):
+def read_cards(path, tipo):
+    """Lee tarjetas desde un archivo.
+
+    Soporta:
+    - .csv de una sola columna con encabezado en la primera línea.
+    - .txt con una tarjeta por línea (opcionalmente puede traer una primera línea tipo
+      "Fortunas"/"Desgracias" como título y se ignora).
+    """
+
     cards = []
-    with open(csv_path, newline="", encoding="utf-8-sig") as f:
-        lines = f.read().splitlines()
-        for line in lines[1:]:  # skip header row
-            line = line.strip()
-            if line:
-                cards.append({"tipo": tipo, "texto": line})
+    with open(path, encoding="utf-8-sig") as f:
+        lines = [ln.strip() for ln in f.read().splitlines()]
+
+    # Filtra líneas vacías
+    lines = [ln for ln in lines if ln]
+    if not lines:
+        return cards
+
+    ext = os.path.splitext(path)[1].lower()
+    skip_first = ext == ".csv"
+
+    # Si el primer renglón parece título, lo ignoramos.
+    first = lines[0].strip().lower()
+    if first in {"fortunas", "desgracias", "fortuna", "desgracia"}:
+        skip_first = True
+
+    for line in (lines[1:] if skip_first else lines):
+        if line:
+            cards.append({"tipo": tipo, "texto": line})
     return cards
 
 
@@ -84,7 +105,7 @@ def index():
 
 @app.route("/fortunas")
 def fortunas():
-    cards = read_cards(os.path.join(BASE_DIR, "data", "fortunas.csv"), "fortuna")
+    cards = read_cards(os.path.join(BASE_DIR, "data", "fortunas.txt"), "fortuna")
     data = leer_imagenes()
     for c in cards:
         c["imagen"] = data.get(card_hash(c["texto"]), {}).get("imagen")
@@ -93,7 +114,7 @@ def fortunas():
 
 @app.route("/desgracias")
 def desgracias():
-    cards = read_cards(os.path.join(BASE_DIR, "data", "desgracias.csv"), "desgracia")
+    cards = read_cards(os.path.join(BASE_DIR, "data", "desgracias.txt"), "desgracia")
     data = leer_imagenes()
     for c in cards:
         c["imagen"] = data.get(card_hash(c["texto"]), {}).get("imagen")
@@ -132,8 +153,8 @@ def guardar_imagenes(data):
 
 
 def todas_las_cartas():
-    fortunas = read_cards(os.path.join(BASE_DIR, "data", "fortunas.csv"), "fortuna")
-    desgracias = read_cards(os.path.join(BASE_DIR, "data", "desgracias.csv"), "desgracia")
+    fortunas = read_cards(os.path.join(BASE_DIR, "data", "fortunas.txt"), "fortuna")
+    desgracias = read_cards(os.path.join(BASE_DIR, "data", "desgracias.txt"), "desgracia")
     cards = []
     for c in fortunas + desgracias:
         h = card_hash(c["texto"])

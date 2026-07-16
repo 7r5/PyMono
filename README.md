@@ -21,8 +21,8 @@ PyMonopoly/
 ├── requirements.txt
 ├── data/
 │   ├── props.csv            # Propiedades del juego
-│   ├── fortunas.csv         # Tarjetas de fortuna
-│   └── desgracias.csv       # Tarjetas de desgracia
+│   ├── fortunas.txt         # Tarjetas de fortuna
+│   └── desgracias.txt       # Tarjetas de desgracia
 ├── static/
 │   ├── styles.css           # Estilos globales (pantalla + impresión)
 │   └── billetes/            # Imágenes PNG de billetes (1,5,10,20,50,100,500)
@@ -70,4 +70,4 @@ PyMonopoly/
 ## Notas
 
 - `main.py` es un generador PDF legacy con ReportLab, no está integrado con las nuevas secciones.
-- Los CSVs de fortunas y desgracias son de una columna: primera línea = encabezado, las siguientes = texto de cada tarjeta.
+- Fortunas y Desgracias ahora usan archivos `.txt`: **una tarjeta por línea** (puedes usar comas sin problema). Opcionalmente puedes dejar una primera línea tipo "Fortunas"/"Desgracias" como título y se ignorará.

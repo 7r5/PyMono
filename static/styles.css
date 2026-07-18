@@ -1009,11 +1009,14 @@ body {
 .fyd-reverso--desgracia .fyd-reverso-inner { background: #fdecea; border-color: rgba(17, 17, 17, 0.3); }
 
 /* Color mode active */
-.fyd-grid.reverso-colores .fyd-reverso--fortuna   { background: #e09c10; border-color: #e09c10; }
-.fyd-grid.reverso-colores .fyd-reverso--desgracia { background: #7A1A1A; border-color: #7A1A1A; }
+.fyd-grid.reverso-colores .fyd-reverso--fortuna   { border-color: #e09c10; }
+.fyd-grid.reverso-colores .fyd-reverso--desgracia { border-color: #7A1A1A; }
 
 .fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-label { color: #ffffff; }
-.fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-inner  { background: transparent; border-color: rgba(255, 255, 255, 0.4); }
+.fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-inner  { border-color: rgba(255, 255, 255, 0.4); }
+
+.fyd-grid.reverso-colores .fyd-reverso--fortuna   .fyd-reverso-inner { background: #e09c10; }
+.fyd-grid.reverso-colores .fyd-reverso--desgracia .fyd-reverso-inner { background: #7A1A1A; }
 
 .fyd-reverso-inner {
   border: 3px solid rgba(255, 255, 255, 0.4);
@@ -1022,6 +1025,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .fyd-reverso-label {

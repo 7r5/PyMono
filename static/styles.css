@@ -449,8 +449,8 @@ body {
   print-color-adjust: exact;
 }
 
-.fyd-card--fortuna .fyd-bar  { background: rgba(224, 156, 16, 0.10); }
-.fyd-card--desgracia .fyd-bar { background: rgba(122, 26, 26, 0.08); }
+.fyd-card--fortuna .fyd-bar  { background: rgba(56, 255, 29, 0.338); }
+.fyd-card--desgracia .fyd-bar { background: rgba(200, 60, 255, 0.299); }
 
 .fyd-tipo {
   color: #111111;
@@ -567,23 +567,23 @@ body {
 
 /* ── Toggle fondo de color ────────────────────────── */
 .fyd-grid.fyd-colores .fyd-card--fortuna {
-  background: #fff2ad;
+  background: #10f51f30;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .fyd-grid.fyd-colores .fyd-card--desgracia {
-  background: #ffd9b8;
+  background: #8800ff1f;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
 .fyd-grid.fyd-colores .fyd-card--fortuna .fyd-bar {
-  background: #f1c74b;
+  background: #12e71233;
 }
 
 .fyd-grid.fyd-colores .fyd-card--desgracia .fyd-bar {
-  background: #f0a16f;
+  background: #ca48f558;
 }
 
 .fyd-grid:not(.fyd-colores) .fyd-card,
@@ -1005,18 +1005,18 @@ body {
 .fyd-reverso--fortuna   .fyd-reverso-label,
 .fyd-reverso--desgracia .fyd-reverso-label { color: #111111; }
 
-.fyd-reverso--fortuna   .fyd-reverso-inner { background: #fff8e1; border-color: rgba(17, 17, 17, 0.3); }
-.fyd-reverso--desgracia .fyd-reverso-inner { background: #fdecea; border-color: rgba(17, 17, 17, 0.3); }
+.fyd-reverso--fortuna   .fyd-reverso-inner { background: #f0b904; border-color: rgba(17, 17, 17, 0.3); }
+.fyd-reverso--desgracia .fyd-reverso-inner { background: #070606; border-color: rgba(17, 17, 17, 0.3); }
 
 /* Color mode active */
-.fyd-grid.reverso-colores .fyd-reverso--fortuna   { border-color: #e09c10; }
-.fyd-grid.reverso-colores .fyd-reverso--desgracia { border-color: #7A1A1A; }
+.fyd-grid.reverso-colores .fyd-reverso--fortuna   { border-color: #0f5a0078; }
+.fyd-grid.reverso-colores .fyd-reverso--desgracia { border-color: #34006c75; }
 
-.fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-label { color: #ffffff; }
+.fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-label { color: #3e3e3e; }
 .fyd-grid.reverso-colores .fyd-reverso .fyd-reverso-inner  { border-color: rgba(255, 255, 255, 0.4); }
 
-.fyd-grid.reverso-colores .fyd-reverso--fortuna   .fyd-reverso-inner { background: #e09c10; }
-.fyd-grid.reverso-colores .fyd-reverso--desgracia .fyd-reverso-inner { background: #7A1A1A; }
+.fyd-grid.reverso-colores .fyd-reverso--fortuna   .fyd-reverso-inner { background: #00f03461; }
+.fyd-grid.reverso-colores .fyd-reverso--desgracia .fyd-reverso-inner { background: #c300ff77; }
 
 .fyd-reverso-inner {
   border: 3px solid rgba(255, 255, 255, 0.4);
